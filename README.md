@@ -115,7 +115,6 @@ In order to check it and see its power you could start a new subscription or jus
 ### Query example. Static
 
 - Block query example:
-
 ```
 query {
   block  {
