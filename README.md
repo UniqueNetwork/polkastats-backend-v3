@@ -1,254 +1,73 @@
-# PolkaStats Backend v3
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
+</p>
 
-New improved backend for https://polkastats.io!
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-<!--ts-->
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-### Table of Contents
+## Description
 
-- [PolkaStats Backend v3](#polkastats-backend-v3)
-    - [Table of Contents](#table-of-contents)
-  - [Installation Instructions](#installation-instructions)
-  - [Usage Instructions](#usage-instructions)
-  - [List of current containers](#list-of-current-containers)
-  - [Updating containers](#updating-containers)
-  - [Crawler](#crawler)
-  - [Phragmen](#phragmen)
-  - [Hasura demo](#hasura-demo)
-    - [Query example. Static](#query-example-static)
-    - [Subscription example. Dynamic](#subscription-example-dynamic)
-  - [Configuration](#configuration)
-    - [Substrate](#substrate)
-    - [Database](#database)
-    - [Crawlers](#crawlers)
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-<!--te-->
+## Installation
 
-## Installation Instructions
-
-```
-git clone https://github.com/Colm3na/polkastats-backend-v3.git
-cd polkastats-backend-v3
-npm install
-```
-
-## Usage Instructions
-
-To launch all docker containers at once:
-
-```
-npm run docker
+```bash
+$ npm install
 ```
 
-To run them separately:
+## Running the app
 
-```
-npm run docker:<container-name>
-```
+```bash
+# development
+$ npm run start
 
-## List of current containers
+# watch mode
+$ npm run start:dev
 
-- substrate-node
-- postgres
-- graphql-engine
-- crawler
-- phragmen (temporarily disabled)
-
-## Updating containers
-
-```
-git pull
-npm run docker:clean
-npm run docker:build
-npm run docker
+# production mode
+$ npm run start:prod
 ```
 
-## Crawler
+## Test
 
-This crawler container listens to new blocks and fills the database. There are a number of processes executed within this container. Some of this processes are triggered based on time configuration that can be seen in this file: [backend.config.js](https://github.com/Colm3na/polkastats-backend-v3/blob/develop/backend.config.js)
-The crawler is able to detect and fill the gaps in postgres database by harvesting all the missing data, so it's safe and resilience against node outages or restarts.
+```bash
+# unit tests
+$ npm run test
 
-## Phragmen
+# e2e tests
+$ npm run test:e2e
 
-This container includes an offline-phragmen binary. It is a forked modification of [Kianenigma](https://github.com/kianenigma/offline-phragmen) repository.
-
-## Hasura demo
-
-The crawler needs to wait for your substrate-node container to get synced before starting to collect data. You can use an already synced external RPC for instant testing by changing the environment variable WS_PROVIDER_URL in `docker-compose.yml` file:
-
-```yaml
-crawler:
-  image: polkastats-backend:latest
-  build:
-    context: ../../
-    dockerfile: ./docker/polkastats-backend/backend/Dockerfile
-  depends_on:
-    - "postgres"
-    - "substrate-node"
-  restart: on-failure
-  environment:
-    - NODE_ENV=production
-    - WS_PROVIDER_URL=wss://kusama-rpc.polkadot.io # Change this line
+# test coverage
+$ npm run test:cov
 ```
 
-Just uncomment out the first one and comment the second and rebuild the dockers.
+## Support
 
-```
-npm run docker:clean
-npm run docker
-```
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-Then browse to http://localhost:8082
+## Stay in touch
 
-Click on "Data" at the top menu
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-![](images/hasura-data.png)
+## License
 
-Then add all tables to the tracking process
-
-![](images/hasura-track.png)
-
-From now on, hasura will be collecting and tracking all the changes in the data base.
-
-In order to check it and see its power you could start a new subscription or just perform an example query such us this one:
-
-### Query example. Static
-
-- Block query example:
-
-```
-query {
-  block  {
-    block_hash
-    block_author
-    block_number
-    block_author_name
-    current_era
-    current_index
-    new_accounts
-    session_length
-    session_per_era
-    session_progress
-  }
-}
-```
-
-- Rewards query example:
-
-```
-query {
-  rewards {
-    era_index
-    era_rewards
-    stash_id
-    timestamp
-  }
-}
-```
-
-- Validator by number of nominators example:
-
-```
-query {
-  validator_num_nominators {
-    block_number
-    nominators
-    timestamp
-  }
-}
-```
-
-- Account query example:
-
-```
-query {
-  account {
-    account_id
-    balances
-    identity
-  }
-}
-```
-
-### Subscription example. Dynamic
-
-- Block subscription example:
-
-```
-subscription {
-  block {
-    block_number
-    block_hash
-    current_era
-    current_index
-  }
-}
-```
-
-- Validator active subscription example:
-
-```
-subscription MySubscription {
-	validator_active {
-    account_id
-    active
-    block_number
-    session_index
-    timestamp
-  }
-}
-```
-
-- Account subscription example:
-
-```
-subscription MySubscription {
-  account {
-    account_id
-    balances
-  }
-}
-```
-
-## Configuration
-
-You can customize your configuration through the following environment variables:
-
-### Substrate
-
-| Env name        | Description           | Default Value            |
-| --------------- | --------------------- | ------------------------ |
-| WS_PROVIDER_URL | Substrate node to use | ws://substrate-node:9944 |
-
-### Database
-
-| Env name          | Description              | Default Value |
-| ----------------- | ------------------------ | ------------- |
-| POSTGRES_USER     | PostgreSQL username      | polkastats    |
-| POSTGRES_PASSWORD | PostgreSQL user password | polkastats    |
-| POSTGRES_HOST     | PostgreSQL host          | postgres      |
-| POSTGRES_PORT     | PostgreSQL port          | 5432          |
-| POSTGRES_DATABASE | PostgreSQL database name | polkastats    |
-
-### Crawlers
-
-| Env name                                | Description                                 | Default Value                                  |
-| --------------------------------------- | ------------------------------------------- | ---------------------------------------------- |
-| CRAWLER_BLOCK_LISTENER_POLLING_TIME_MS  | Polling time for block listener (ms)        | 60000                                          |
-| CRAWLER_ACTIVE_ACCOUNTS_POLLING_TIME_MS | Polling time for accounts crawler (ms)      | 600000                                         |
-| CRAWLER_PHRAGMEN_POLLING_TIME_MS        | Polling time for phragmen executions (ms)   | 300000                                         |
-| CRAWLER_PHRAGMEN_OUTPUT_DIR             | Directory to store the phgramen JSON result | /tmp/phragmen                                  |
-| CRAWLER_PHRAGMEN_BINARY_PATH            | Path to the phragmen executable             | /usr/app/polkastats-backend-v3/offline-phragme |
-
-You can also disable specific crawlers with the following environment variables:
-
-- `CRAWLER_SYSTEM_DISABLE`
-- `CRAWLER_BLOCK_LISTENER_DISABLE`
-- `CRAWLER_BLOCK_HARVESTER_DISABLE`
-- `CRAWLER_STAKING_DISABLE`
-- `CRAWLER_ACTIVE_ACCOUNTS_DISABLE`
-- `CRAWLER_CHAIN_DISABLE`
-- `CRAWLER_ERA_LISTENER_DISABLE`
-- `CRAWLER_PHRAGMEN_DISABLE`
-
-For instance, if you want to disable phgramen crawler just set `CRAWLER_PHRAGMEN_DISABLE=true`.
+Nest is [MIT licensed](LICENSE).
