@@ -1,4 +1,30 @@
 {
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src"
+  "sourceRoot": "apps/web-api/src",
+  "monorepo": true,
+  "root": "apps/web-api",
+  "compilerOptions": {
+    "webpack": true,
+    "tsConfigPath": "apps/web-api/tsconfig.app.json"
+  },
+  "projects": {
+    "web-api": {
+      "type": "application",
+      "root": "apps/web-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/web-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/web-api/tsconfig.app.json"
+      }
+    },
+    "crawler": {
+      "type": "application",
+      "root": "apps/crawler",
+      "entryFile": "main",
+      "sourceRoot": "apps/crawler/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/crawler/tsconfig.app.json"
+      }
+    }
+  }
 }
