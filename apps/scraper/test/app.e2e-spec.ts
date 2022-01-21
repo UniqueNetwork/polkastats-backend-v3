@@ -1,14 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { CrawlerModule } from './../src/crawler.module';
+import { ScraperModule } from './../src/scraper.module';
 
-describe('CrawlerController (e2e)', () => {
+describe('ScraperController (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [CrawlerModule],
+      imports: [ScraperModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();

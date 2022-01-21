@@ -17,13 +17,13 @@
         "tsConfigPath": "apps/web-api/tsconfig.app.json"
       }
     },
-    "crawler": {
+    "scraper": {
       "type": "application",
-      "root": "apps/crawler",
+      "root": "apps/scraper",
       "entryFile": "main",
-      "sourceRoot": "apps/crawler/src",
+      "sourceRoot": "apps/scraper/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/crawler/tsconfig.app.json"
+        "tsConfigPath": "apps/scraper/tsconfig.app.json"
       }
     }
   }

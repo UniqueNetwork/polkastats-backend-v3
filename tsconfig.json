@@ -20,7 +20,7 @@
     "paths": {
       "@interfaces/*": ["./common/interfaces/*"],
       "@entities/*": ["./common/entities/*"],
-      "@common/*": ["./common/*"],
+      "@common/*": ["./common/*"]
     }
   }
 }
