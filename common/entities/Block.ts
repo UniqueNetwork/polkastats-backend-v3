@@ -1,10 +1,15 @@
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index } from 'typeorm';
 
 @Index('block_pkey', ['blockNumber'], { unique: true })
 @Entity('block', { schema: 'public' })
+@ObjectType()
 export class Block {
   @Column('bigint', { primary: true, name: 'block_number' })
-  blockNumber: string;
+  @Field(() => Int, {
+    name: 'block_number',
+  })
+  blockNumber: number;
 
   @Column('bigint', { name: 'block_number_finalized' })
   blockNumberFinalized: string;
@@ -16,6 +21,9 @@ export class Block {
   blockAuthorName: string | null;
 
   @Column('text', { name: 'block_hash' })
+  @Field(() => String, {
+    name: 'block_hash',
+  })
   blockHash: string;
 
   @Column('text', { name: 'parent_hash' })
