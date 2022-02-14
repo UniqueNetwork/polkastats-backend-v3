@@ -4,16 +4,16 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('chain', { schema: 'public' })
 export class Chain {
   @Column('bigint', { primary: true, name: 'block_height' })
-  blockHeight: string;
+  block_height: string;
 
   @Column('integer', { name: 'session_index' })
-  sessionIndex: number;
+  session_index: number;
 
   @Column('text', { name: 'total_issuance' })
-  totalIssuance: string;
+  total_issuance: string;
 
   @Column('bigint', { name: 'active_accounts' })
-  activeAccounts: string;
+  active_accounts: string;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

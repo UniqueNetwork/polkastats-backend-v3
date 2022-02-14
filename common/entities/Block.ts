@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('block_pkey', ['blockNumber'], { unique: true })
+@Index('block_pkey', ['block_number'], { unique: true })
 @Entity('block', { schema: 'public' })
 @ObjectType()
 export class Block {
@@ -9,79 +9,79 @@ export class Block {
   @Field(() => Int, {
     name: 'block_number',
   })
-  blockNumber: number;
+  block_number: number;
 
   @Column('bigint', { name: 'block_number_finalized' })
-  blockNumberFinalized: string;
+  block_number_finalized: string;
 
   @Column('text', { name: 'block_author', nullable: true })
-  blockAuthor: string | null;
+  block_author: string | null;
 
   @Column('text', { name: 'block_author_name', nullable: true })
-  blockAuthorName: string | null;
+  block_author_name: string | null;
 
   @Column('text', { name: 'block_hash' })
   @Field(() => String, {
     name: 'block_hash',
   })
-  blockHash: string;
+  block_hash: string;
 
   @Column('text', { name: 'parent_hash' })
-  parentHash: string;
+  parent_hash: string;
 
   @Column('text', { name: 'extrinsics_root' })
-  extrinsicsRoot: string;
+  extrinsics_root: string;
 
   @Column('text', { name: 'state_root', nullable: true })
-  stateRoot: string | null;
+  state_root: string | null;
 
   @Column('bigint', { name: 'current_era', nullable: true })
-  currentEra: string | null;
+  current_era: string | null;
 
   @Column('bigint', { name: 'current_index', nullable: true })
-  currentIndex: string | null;
+  current_index: string | null;
 
   @Column('bigint', { name: 'era_length', nullable: true })
-  eraLength: string | null;
+  era_length: string | null;
 
   @Column('bigint', { name: 'era_progress', nullable: true })
-  eraProgress: string | null;
+  era_progress: string | null;
 
   @Column('boolean', { name: 'is_epoch', nullable: true })
-  isEpoch: boolean | null;
+  is_epoch: boolean | null;
 
   @Column('boolean', { name: 'is_election' })
-  isElection: boolean;
+  is_election: boolean;
 
   @Column('bigint', { name: 'session_length', nullable: true })
-  sessionLength: string | null;
+  session_length: string | null;
 
   @Column('integer', { name: 'session_per_era', nullable: true })
-  sessionPerEra: number | null;
+  session_per_era: number | null;
 
   @Column('bigint', { name: 'session_progress', nullable: true })
-  sessionProgress: string | null;
+  session_progress: string | null;
 
   @Column('integer', { name: 'validator_count' })
-  validatorCount: number;
+  validator_count: number;
 
   @Column('text', { name: 'spec_name' })
-  specName: string;
+  spec_name: string;
 
   @Column('integer', { name: 'spec_version' })
-  specVersion: number;
+  spec_version: number;
 
   @Column('integer', { name: 'total_events' })
-  totalEvents: number;
+  total_events: number;
 
   @Column('integer', { name: 'num_transfers' })
-  numTransfers: number;
+  num_transfers: number;
 
   @Column('integer', { name: 'new_accounts' })
-  newAccounts: number;
+  new_accounts: number;
 
   @Column('text', { name: 'total_issuance' })
-  totalIssuance: string;
+  total_issuance: string;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

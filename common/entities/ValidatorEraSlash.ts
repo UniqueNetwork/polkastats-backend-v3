@@ -4,10 +4,10 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('validator_era_slash', { schema: 'public' })
 export class ValidatorEraSlash {
   @Column('integer', { primary: true, name: 'era_index' })
-  eraIndex: number;
+  era_index: number;
 
   @Column('text', { primary: true, name: 'stash_id' })
-  stashId: string;
+  stash_id: string;
 
   @Column('bigint', { name: 'amount' })
   amount: string;

@@ -4,16 +4,16 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('system', { schema: 'public' })
 export class System {
   @Column('bigint', { primary: true, name: 'block_height' })
-  blockHeight: string;
+  block_height: string;
 
   @Column('text', { name: 'chain' })
   chain: string;
 
   @Column('text', { name: 'node_name' })
-  nodeName: string;
+  node_name: string;
 
   @Column('text', { name: 'node_version' })
-  nodeVersion: string;
+  node_version: string;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

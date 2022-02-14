@@ -4,10 +4,10 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('phragmen', { schema: 'public' })
 export class Phragmen {
   @Column('bigint', { primary: true, name: 'block_height' })
-  blockHeight: string;
+  block_height: string;
 
   @Column('text', { name: 'phragmen_json' })
-  phragmenJson: string;
+  phragmen_json: string;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

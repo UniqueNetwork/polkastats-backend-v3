@@ -6,31 +6,31 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('validator_era_staking', { schema: 'public' })
 export class ValidatorEraStaking {
   @Column('integer', { primary: true, name: 'era_index' })
-  eraIndex: number;
+  era_index: number;
 
   @Column('text', { name: 'stash_id', nullable: true })
-  stashId: string | null;
+  stash_id: string | null;
 
   @Column('text', { name: 'identity' })
   identity: string;
 
   @Column('text', { name: 'display_name' })
-  displayName: string;
+  display_name: string;
 
   @Column('bigint', { name: 'commission', nullable: true })
   commission: string | null;
 
   @Column('text', { name: 'era_rewards', nullable: true })
-  eraRewards: string | null;
+  era_rewards: string | null;
 
   @Column('integer', { primary: true, name: 'era_points' })
-  eraPoints: number;
+  era_points: number;
 
   @Column('text', { name: 'stake_info', nullable: true })
-  stakeInfo: string | null;
+  stake_info: string | null;
 
   @Column('bigint', { name: 'estimated_payout' })
-  estimatedPayout: string;
+  estimated_payout: string;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

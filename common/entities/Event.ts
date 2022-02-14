@@ -1,13 +1,13 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('event_pkey', ['blockNumber', 'eventIndex'], { unique: true })
+@Index('event_pkey', ['block_number', 'event_index'], { unique: true })
 @Entity('event', { schema: 'public' })
 export class Event {
   @Column('bigint', { primary: true, name: 'block_number' })
-  blockNumber: string;
+  block_number: string;
 
   @Column('integer', { primary: true, name: 'event_index' })
-  eventIndex: number;
+  event_index: number;
 
   @Column('text', { name: 'section' })
   section: string;

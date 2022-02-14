@@ -1,20 +1,20 @@
 import { Column, Entity, Index } from 'typeorm';
 
 @Index('extrinsic_args_idx', ['args'], {})
-@Index('extrinsic_pkey', ['blockNumber', 'extrinsicIndex'], { unique: true })
+@Index('extrinsic_pkey', ['block_number', 'extrinsic_index'], { unique: true })
 @Index('extrinsic_method_idx', ['method'], {})
 @Index('extrinsic_section_idx', ['section'], {})
 @Index('extrinsic_signer_idx', ['signer'], {})
 @Entity('extrinsic', { schema: 'public' })
 export class Extrinsic {
   @Column('bigint', { primary: true, name: 'block_number' })
-  blockNumber: string;
+  block_number: string;
 
   @Column('integer', { primary: true, name: 'extrinsic_index' })
-  extrinsicIndex: number;
+  extrinsic_index: number;
 
   @Column('boolean', { name: 'is_signed' })
-  isSigned: boolean;
+  is_signed: boolean;
 
   @Column('text', { name: 'signer', nullable: true })
   signer: string | null;

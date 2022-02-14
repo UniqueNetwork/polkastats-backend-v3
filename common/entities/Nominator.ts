@@ -6,43 +6,43 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('nominator', { schema: 'public' })
 export class Nominator {
   @Column('bigint', { primary: true, name: 'block_height' })
-  blockHeight: string;
+  block_height: string;
 
   @Column('integer', { primary: true, name: 'session_index' })
-  sessionIndex: number;
+  session_index: number;
 
   @Column('text', { primary: true, name: 'account_id' })
-  accountId: string;
+  account_id: string;
 
   @Column('text', { name: 'controller_id' })
-  controllerId: string;
+  controller_id: string;
 
   @Column('text', { name: 'stash_id' })
-  stashId: string;
+  stash_id: string;
 
   @Column('integer', { name: 'rank' })
   rank: number;
 
   @Column('bigint', { name: 'total_staked' })
-  totalStaked: string;
+  total_staked: string;
 
   @Column('text', { name: 'identity' })
   identity: string;
 
   @Column('text', { name: 'display_name' })
-  displayName: string;
+  display_name: string;
 
   @Column('text', { name: 'balances' })
   balances: string;
 
   @Column('bigint', { name: 'available_balance' })
-  availableBalance: string;
+  available_balance: string;
 
   @Column('bigint', { name: 'free_balance' })
-  freeBalance: string;
+  free_balance: string;
 
   @Column('bigint', { name: 'locked_balance' })
-  lockedBalance: string;
+  locked_balance: string;
 
   @Column('bigint', { name: 'nonce' })
   nonce: string;

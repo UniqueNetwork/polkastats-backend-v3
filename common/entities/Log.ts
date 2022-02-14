@@ -1,13 +1,13 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('log_pkey', ['blockNumber', 'logIndex'], { unique: true })
+@Index('log_pkey', ['block_number', 'log_index'], { unique: true })
 @Entity('log', { schema: 'public' })
 export class Log {
   @Column('bigint', { primary: true, name: 'block_number' })
-  blockNumber: string;
+  block_number: string;
 
   @Column('integer', { primary: true, name: 'log_index' })
-  logIndex: number;
+  log_index: number;
 
   @Column('text', { name: 'type', nullable: true })
   type: string | null;

@@ -7,19 +7,19 @@ import { Column, Entity, Index } from 'typeorm';
 @Entity('validator', { schema: 'public' })
 export class Validator {
   @Column('bigint', { primary: true, name: 'block_height' })
-  blockHeight: string;
+  block_height: string;
 
   @Column('integer', { primary: true, name: 'session_index' })
-  sessionIndex: number;
+  session_index: number;
 
   @Column('text', { primary: true, name: 'account_id' })
-  accountId: string;
+  account_id: string;
 
   @Column('text', { name: 'controller_id' })
-  controllerId: string;
+  controller_id: string;
 
   @Column('text', { name: 'stash_id' })
-  stashId: string;
+  stash_id: string;
 
   @Column('integer', { name: 'rank' })
   rank: number;
@@ -31,55 +31,55 @@ export class Validator {
   identity: string;
 
   @Column('text', { name: 'display_name' })
-  displayName: string;
+  display_name: string;
 
   @Column('text', { name: 'exposure' })
   exposure: string;
 
   @Column('text', { name: 'exposure_total' })
-  exposureTotal: string;
+  exposure_total: string;
 
   @Column('text', { name: 'exposure_own' })
-  exposureOwn: string;
+  exposure_own: string;
 
   @Column('text', { name: 'exposure_others' })
-  exposureOthers: string;
+  exposure_others: string;
 
   @Column('text', { name: 'nominators' })
   nominators: string;
 
   @Column('text', { name: 'reward_destination' })
-  rewardDestination: string;
+  reward_destination: string;
 
   @Column('text', { name: 'staking_ledger' })
-  stakingLedger: string;
+  staking_ledger: string;
 
   @Column('text', { name: 'validator_prefs' })
-  validatorPrefs: string;
+  validator_prefs: string;
 
   @Column('text', { name: 'commission' })
   commission: string;
 
   @Column('text', { name: 'session_ids' })
-  sessionIds: string;
+  session_ids: string;
 
   @Column('text', { name: 'next_session_ids' })
-  nextSessionIds: string;
+  next_session_ids: string;
 
   @Column('text', { name: 'session_id_hex' })
-  sessionIdHex: string;
+  session_id_hex: string;
 
   @Column('text', { name: 'next_session_id_hex' })
-  nextSessionIdHex: string;
+  next_session_id_hex: string;
 
   @Column('text', { name: 'redeemable' })
   redeemable: string;
 
   @Column('boolean', { name: 'next_elected' })
-  nextElected: boolean;
+  next_elected: boolean;
 
   @Column('integer', { name: 'produced_blocks' })
-  producedBlocks: number;
+  produced_blocks: number;
 
   @Column('bigint', { name: 'timestamp' })
   timestamp: string;

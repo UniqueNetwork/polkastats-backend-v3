@@ -15,7 +15,7 @@ export class Tokens {
   id: string;
 
   @Column('integer', { name: 'token_id' })
-  tokenId: number;
+  token_id: number;
 
   @Column('character varying', { name: 'owner', length: 255 })
   owner: string;
