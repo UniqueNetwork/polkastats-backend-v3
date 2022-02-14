@@ -25,6 +25,9 @@
     "db:migration:create": "npm run typeorm migration:create -- -n"
   },
   "dependencies": {
+    "@nestjs-query/core": "^0.30.0",
+    "@nestjs-query/query-graphql": "file:nestjs-query-query-graphql-0.30.0.tgz",
+    "@nestjs-query/query-typeorm": "^0.30.0",
     "@nestjs/common": "^8.2.5",
     "@nestjs/config": "^1.1.6",
     "@nestjs/core": "^8.2.5",
