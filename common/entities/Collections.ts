@@ -1,7 +1,7 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
 import { Tokens } from './Tokens';
 
-@Index('collections_pkey', ['collectionId'], { unique: true })
+@Index('collections_pkey', ['collection_id'], { unique: true })
 @Entity('collections', { schema: 'public' })
 export class Collections {
   @Column('bigint', { primary: true, name: 'collection_id' })

@@ -23,7 +23,12 @@ export class Tokens {
   @Column('jsonb', { name: 'data', default: {} })
   data: object;
 
+  @Column('integer', { name: 'collection_id' })
+  collection_id: number;
+
   @ManyToOne(() => Collections, (collections) => collections.tokens)
-  @JoinColumn([{ name: 'collection_id', referencedColumnName: 'collectionId' }])
+  @JoinColumn([
+    { name: 'collection_id', referencedColumnName: 'collection_id' },
+  ])
   collection: Collections;
 }

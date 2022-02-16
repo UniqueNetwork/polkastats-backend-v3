@@ -5,15 +5,17 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import typeormConfig from '@common/typeorm.config';
 import { GraphQLModule } from '@nestjs/graphql';
-import { BlockModule } from './block/block.module';
 import { Block } from '@entities/Block';
+import { HolderModule } from './holder/holder.module';
+import { Tokens } from '@entities/Tokens';
+import { Collections } from '@entities/Collections';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...typeormConfig,
-      entities: [Block],
+      entities: [Block, Tokens, Collections],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -21,7 +23,7 @@ import { Block } from '@entities/Block';
       playground: true,
       sortSchema: true,
     }),
-    BlockModule,
+    HolderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
