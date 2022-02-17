@@ -1,12 +1,21 @@
 import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
 
-interface WhereOperators {
+interface IWhereOperators {
   _eq?: number | string;
   _neq?: number | string;
 }
 
+export type TWhereParams<T> = {
+  [key in keyof T]: IWhereOperators;
+};
+export interface IGQLQueryArgs<T> {
+  limit?: number;
+  offset?: number;
+  where?: TWhereParams<T>;
+}
+
 @InputType()
-export class GQLWhereOpsInt implements WhereOperators {
+export class GQLWhereOpsInt implements IWhereOperators {
   @Field(() => Int, { nullable: true })
   _eq?: number;
 
@@ -15,7 +24,7 @@ export class GQLWhereOpsInt implements WhereOperators {
 }
 
 @InputType()
-export class GQLWhereOpsString implements WhereOperators {
+export class GQLWhereOpsString implements IWhereOperators {
   @Field(() => String, { nullable: true })
   _eq?: string;
 

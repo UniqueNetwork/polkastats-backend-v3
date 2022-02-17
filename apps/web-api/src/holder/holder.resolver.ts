@@ -9,18 +9,23 @@ import {
 import {
   GQLQueryPaginationArgs,
   GQLWhereOpsString,
+  IGQLQueryArgs,
+  TWhereParams,
 } from '../utils/gql-query-args';
 import { HolderDTO } from './holder.dto';
 import { HolderService } from './holder.service';
 
 @InputType()
-class HolderWhereParams {
+class HolderWhereParams implements TWhereParams<HolderDTO> {
   @Field(() => GQLWhereOpsString, { nullable: true })
   owner?: GQLWhereOpsString;
 }
 
 @ArgsType()
-class QueryArgs extends GQLQueryPaginationArgs {
+class QueryArgs
+  extends GQLQueryPaginationArgs
+  implements IGQLQueryArgs<HolderDTO>
+{
   @Field(() => HolderWhereParams, { nullable: true })
   where?: HolderWhereParams;
 }
