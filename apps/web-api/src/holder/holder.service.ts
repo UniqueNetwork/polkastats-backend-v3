@@ -1,21 +1,25 @@
 import { Tokens } from '@entities/Tokens';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { BaseService } from '../utils/base.service';
+import { IGQLQueryArgs } from '../utils/gql-query-args';
+import { HolderDTO } from './holder.dto';
 
 @Injectable()
-export class HolderService {
-  constructor(@InjectRepository(Tokens) private repo: Repository<Tokens>) {}
+export class HolderService extends BaseService<Tokens, HolderDTO> {
+  constructor(@InjectRepository(Tokens) private repo: Repository<Tokens>) {
+    super();
+  }
 
-  public async find(): Promise<Tokens[]> {
+  public async find(queryArgs: IGQLQueryArgs<HolderDTO>): Promise<Tokens[]> {
     const qb = this.repo.createQueryBuilder();
     qb.select(['collection_id', 'owner']);
     qb.addSelect('count(token_id)', 'count');
     qb.addGroupBy('Tokens.collection_id');
     qb.addGroupBy('owner');
-    // qb.where({
-    //   owner: Equal('5CQ3p41Br2djPnhX1gSHyi9bBsPVQU8zh6GFxtE8R1D85uV2'),
-    // });
+    this.applyLimitOffset(qb, queryArgs);
+    this.applyWhereCondition(qb, queryArgs);
     const tokens = await qb.getRawMany();
     return tokens;
   }

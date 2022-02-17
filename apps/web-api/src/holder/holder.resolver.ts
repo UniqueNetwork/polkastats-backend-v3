@@ -36,6 +36,6 @@ export class HolderResolver {
 
   @Query(() => [HolderDTO])
   public async holders(@Args() args: QueryArgs): Promise<HolderDTO[]> {
-    return this.service.find();
+    return this.service.find(args);
   }
 }

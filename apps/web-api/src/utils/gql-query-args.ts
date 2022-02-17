@@ -1,6 +1,6 @@
 import { ArgsType, Field, InputType, Int } from '@nestjs/graphql';
 
-interface IWhereOperators {
+export interface IWhereOperators {
   _eq?: number | string;
   _neq?: number | string;
 }
