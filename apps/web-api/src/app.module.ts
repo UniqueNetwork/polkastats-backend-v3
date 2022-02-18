@@ -9,13 +9,15 @@ import { Block } from '@entities/Block';
 import { HolderModule } from './holder/holder.module';
 import { Tokens } from '@entities/Tokens';
 import { Collections } from '@entities/Collections';
+import { TransferModule } from './transfer/transfer.module';
+import { Event } from '@entities/Event';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...typeormConfig,
-      entities: [Block, Tokens, Collections],
+      entities: [Block, Tokens, Collections, Event],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -24,6 +26,7 @@ import { Collections } from '@entities/Collections';
       sortSchema: true,
     }),
     HolderModule,
+    TransferModule,
   ],
   controllers: [AppController],
   providers: [AppService],
