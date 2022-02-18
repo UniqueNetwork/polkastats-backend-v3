@@ -8,6 +8,7 @@ import {
 } from '@nestjs/graphql';
 import {
   GQLQueryPaginationArgs,
+  GQLWhereOpsInt,
   GQLWhereOpsString,
   IGQLQueryArgs,
   TWhereParams,
@@ -19,6 +20,9 @@ import { HolderService } from './holder.service';
 class HolderWhereParams implements TWhereParams<HolderDTO> {
   @Field(() => GQLWhereOpsString, { nullable: true })
   owner?: GQLWhereOpsString;
+
+  @Field(() => GQLWhereOpsInt, { nullable: true })
+  collection_id?: GQLWhereOpsInt;
 }
 
 @ArgsType()
