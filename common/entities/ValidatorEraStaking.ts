@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('validator_era_staking_pkey', ['eraIndex', 'eraPoints'], {
+@Index('validator_era_staking_pkey', ['era_index', 'era_points'], {
   unique: true,
 })
 @Entity('validator_era_staking', { schema: 'public' })

@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('nominator_pkey', ['accountId', 'blockHeight', 'sessionIndex'], {
+@Index('nominator_pkey', ['account_id', 'block_height', 'session_index'], {
   unique: true,
 })
 @Entity('nominator', { schema: 'public' })

@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('account_pkey', ['accountId'], { unique: true })
+@Index('account_pkey', ['account_id'], { unique: true })
 @Entity('account', { schema: 'public' })
 export class Account {
   @Column('text', { primary: true, name: 'account_id' })

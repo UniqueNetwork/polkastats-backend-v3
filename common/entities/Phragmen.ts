@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('phragmen_pkey', ['blockHeight'], { unique: true })
+@Index('phragmen_pkey', ['block_height'], { unique: true })
 @Entity('phragmen', { schema: 'public' })
 export class Phragmen {
   @Column('bigint', { primary: true, name: 'block_height' })

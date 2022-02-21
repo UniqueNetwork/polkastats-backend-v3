@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('system_pkey', ['blockHeight'], { unique: true })
+@Index('system_pkey', ['block_height'], { unique: true })
 @Entity('system', { schema: 'public' })
 export class System {
   @Column('bigint', { primary: true, name: 'block_height' })

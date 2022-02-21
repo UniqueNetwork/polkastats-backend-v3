@@ -1,9 +1,9 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('validator_pkey', ['accountId', 'blockHeight', 'sessionIndex'], {
+@Index('validator_pkey', ['account_id', 'block_height', 'session_index'], {
   unique: true,
 })
-@Index('validator_account_id_idx', ['accountId'], {})
+@Index('validator_account_id_idx', ['account_id'], {})
 @Entity('validator', { schema: 'public' })
 export class Validator {
   @Column('bigint', { primary: true, name: 'block_height' })

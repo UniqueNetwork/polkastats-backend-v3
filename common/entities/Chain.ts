@@ -1,6 +1,6 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('chain_pkey', ['blockHeight'], { unique: true })
+@Index('chain_pkey', ['block_height'], { unique: true })
 @Entity('chain', { schema: 'public' })
 export class Chain {
   @Column('bigint', { primary: true, name: 'block_height' })

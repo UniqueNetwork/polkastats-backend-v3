@@ -1,7 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
 
-@Index('intention_account_id_idx', ['accountId'], {})
-@Index('intention_pkey', ['accountId', 'blockHeight', 'sessionIndex'], {
+@Index('intention_account_id_idx', ['account_id'], {})
+@Index('intention_pkey', ['account_id', 'block_height', 'session_index'], {
   unique: true,
 })
 @Entity('intention', { schema: 'public' })
