@@ -4,22 +4,12 @@ const { Logger } = require('./utils/logger');
 const { BlockExplorer } = require('./blockexplorer')
 const rtt = require('./config/runtime_types.json');
 const { ProvierFactory } = require('./lib/providerAPI/providerAPI');
-const { startServer } = require('./prometheus');
+const { startServer, closeServer } = require('./prometheus');
 
 
 const log = new Logger();
 
-
-async function getSequlize(sConnect) {
-  const result = new Sequelize(sConnect);
-  try {
-    await result.authenticate();
-    return result;
-  } catch (error) {
-    log.error(error);
-  }
-}
-
+const sequelize = new Sequelize(dbConnect);
 
 async function getPolkadotAPI(wsProviderUrl, rtt) {
   log.info(`Connecting to ${wsProviderUrl}`);
@@ -68,20 +58,47 @@ async function getPolkadotAPI(wsProviderUrl, rtt) {
 }
 
 async function main() {
-  const sequelize = await getSequlize(dbConnect);
-  const api = await getPolkadotAPI(wsProviderUrl, rtt);    
-  const blockExplorer = new BlockExplorer({
-    api, sequelize, crawlers
-  });  
-  await blockExplorer.run()
+  try {
+    await sequelize.authenticate();
+    
+    const api = await getPolkadotAPI(wsProviderUrl, rtt);    
+    const blockExplorer = new BlockExplorer({
+      api, sequelize, crawlers
+    });  
+    
+    await blockExplorer.run()
   
-  startServer(() => {
-    log.info('Server running...')
-  });
-  
+    startServer(() => {
+      log.info('Server running...')
+    });  
+    
+  } catch (error) {
+    log.error;
+  }    
 }
 
-main().catch((error) => {
-  console.error(error);
+process.on('SIGTERM', () => {    
+  closeServer(() => {
+    log.info('Close server');
+  });
+
+  const hightestTimeoutId = setTimeout(() => {
+    console.log('Closed');
+    process.exit(-1);
+  }, 2000);
+
+  for (let i = 0; i < hightestTimeoutId; i++) {
+    clearTimeout(i);
+  }
+
+  sequelize.close().then((_) => {
+    log.info('Close connection with PostgreSQL');          
+  }).catch((error) => {
+    log.error(error);    
+  })
+});
+
+main().catch((error) => {  
+  console.error(error);  
   process.exit(-1);
 });
