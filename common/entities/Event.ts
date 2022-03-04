@@ -26,4 +26,7 @@ export class Event {
 
   @Column('text', { name: 'amount', nullable: true })
   amount: string | null;
+
+  @Column('text', { name: 'block_index', nullable: true })
+  block_index: string;
 }

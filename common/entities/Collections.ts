@@ -73,4 +73,10 @@ export class Collections {
 
   @OneToMany(() => Tokens, (tokens) => tokens.collection)
   tokens: Tokens[];
+
+  @Column('boolean', { name: 'mint_mode', nullable: true })
+  mint_mode?: boolean;
+
+  @Column('bigint', { name: 'date_of_creation', nullable: true })
+  date_of_creation?: number;
 }

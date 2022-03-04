@@ -23,7 +23,7 @@ export class Tokens {
   @Column('jsonb', { name: 'data', default: {} })
   data: object;
 
-  @Column('integer', { name: 'collection_id' })
+  @Column('bigint', { name: 'collection_id' })
   collection_id: number;
 
   @ManyToOne(() => Collections, (collections) => collections.tokens)
@@ -31,4 +31,7 @@ export class Tokens {
     { name: 'collection_id', referencedColumnName: 'collection_id' },
   ])
   collection: Collections;
+
+  @Column('bigint', { name: 'date_of_creation', nullable: true })
+  date_of_creation?: number;
 }

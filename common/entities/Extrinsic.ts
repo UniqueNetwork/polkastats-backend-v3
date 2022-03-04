@@ -45,4 +45,10 @@ export class Extrinsic {
 
   @Column('text', { name: 'fee', nullable: true })
   fee: string | null;
+
+  @Column({ length: 255, nullable: true })
+  block_index: string;
+
+  @Column({ length: 255, nullable: true })
+  to_owner?: string;
 }
