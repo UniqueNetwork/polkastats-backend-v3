@@ -12,13 +12,15 @@ import { Collections } from '@entities/Collections';
 import { TransferModule } from './transfer/transfer.module';
 import { Event } from '@entities/Event';
 import { TokenModule } from './tokens/token.module';
+import { CollectionModule } from './collection/collection.module';
+import { CollectionsStats } from '@entities/CollectionsStats';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...typeormConfig,
-      entities: [Block, Tokens, Collections, Event],
+      entities: [Block, Tokens, Collections, CollectionsStats, Event],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -29,6 +31,7 @@ import { TokenModule } from './tokens/token.module';
     HolderModule,
     TransferModule,
     TokenModule,
+    CollectionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

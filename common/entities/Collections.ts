@@ -1,11 +1,19 @@
-import { Column, Entity, Index, OneToMany } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
+import { CollectionsStats } from './CollectionsStats';
 import { Tokens } from './Tokens';
 
 @Index('collections_pkey', ['collection_id'], { unique: true })
 @Entity('collections', { schema: 'public' })
 export class Collections {
   @Column('bigint', { primary: true, name: 'collection_id' })
-  collection_id: string;
+  collection_id: number;
 
   @Column('text', { name: 'owner' })
   owner: string;
@@ -20,7 +28,7 @@ export class Collections {
   offchain_schema: string | null;
 
   @Column('bigint', { name: 'token_limit' })
-  token_limit: string;
+  token_limit: number;
 
   @Column('jsonb', { name: 'const_chain_schema', nullable: true, default: {} })
   const_chain_schema: object | null;
@@ -33,7 +41,7 @@ export class Collections {
   variable_on_chain_schema: object | null;
 
   @Column('bigint', { name: 'limits_account_ownership', nullable: true })
-  limits_account_ownership: string | null;
+  limits_account_ownership: number | null;
 
   @Column('integer', { name: 'limits_sponsore_data_size', nullable: true })
   limits_sponsore_data_size: number | null;
@@ -79,4 +87,10 @@ export class Collections {
 
   @Column('bigint', { name: 'date_of_creation', nullable: true })
   date_of_creation?: number;
+
+  @OneToOne(() => CollectionsStats)
+  @JoinColumn([
+    { name: 'collection_id', referencedColumnName: 'collection_id' },
+  ])
+  statistics: CollectionsStats;
 }
