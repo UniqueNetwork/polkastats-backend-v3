@@ -32,8 +32,8 @@ export class Collections {
   })
   variable_on_chain_schema: object | null;
 
-  @Column('bigint', { name: 'limits_accout_ownership', nullable: true })
-  limits_accout_ownership: string | null;
+  @Column('bigint', { name: 'limits_account_ownership', nullable: true })
+  limits_account_ownership: string | null;
 
   @Column('integer', { name: 'limits_sponsore_data_size', nullable: true })
   limits_sponsore_data_size: number | null;
@@ -41,18 +41,18 @@ export class Collections {
   @Column('integer', { name: 'limits_sponsore_data_rate', nullable: true })
   limits_sponsore_data_rate: number | null;
 
-  @Column('boolean', { name: 'owner_can_trasfer', nullable: true })
-  owner_can_trasfer: boolean | null;
+  @Column('boolean', { name: 'owner_can_transfer', nullable: true })
+  owner_can_transfer: boolean | null;
 
   @Column('boolean', { name: 'owner_can_destroy', nullable: true })
   owner_can_destroy: boolean | null;
 
   @Column('character varying', {
-    name: 'sponsorship_confirmed',
+    name: 'sponsorship',
     nullable: true,
     length: 255,
   })
-  sponsorship_confirmed: string | null;
+  sponsorship: string | null;
 
   @Column('character varying', {
     name: 'schema_version',
