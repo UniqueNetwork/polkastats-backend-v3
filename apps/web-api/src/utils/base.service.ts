@@ -52,7 +52,7 @@ export class BaseService<T, S> {
       const ormOperator = this.getOrmWhereOperator(operatorName);
       whereCondition[field] = ormOperator(operators[operatorName]);
     }
-    qb.where(whereCondition);
+    qb.andWhere(whereCondition);
   }
 
   private getOrmWhereOperator(

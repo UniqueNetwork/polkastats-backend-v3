@@ -14,6 +14,7 @@ import { Event } from '@entities/Event';
 import { TokenModule } from './tokens/token.module';
 import { CollectionModule } from './collection/collection.module';
 import { CollectionsStats } from '@entities/CollectionsStats';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CollectionsStats } from '@entities/CollectionsStats';
     TransferModule,
     TokenModule,
     CollectionModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],
