@@ -15,13 +15,22 @@ import { TokenModule } from './tokens/token.module';
 import { CollectionModule } from './collection/collection.module';
 import { CollectionsStats } from '@entities/CollectionsStats';
 import { EventModule } from './event/event.module';
+import { ExtrinsicModule } from './extrinsic/extrinsic.module';
+import { Extrinsic } from '@entities/Extrinsic';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...typeormConfig,
-      entities: [Block, Tokens, Collections, CollectionsStats, Event],
+      entities: [
+        Block,
+        Tokens,
+        Collections,
+        CollectionsStats,
+        Event,
+        Extrinsic,
+      ],
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
@@ -34,6 +43,7 @@ import { EventModule } from './event/event.module';
     TokenModule,
     CollectionModule,
     EventModule,
+    ExtrinsicModule,
   ],
   controllers: [AppController],
   providers: [AppService],
