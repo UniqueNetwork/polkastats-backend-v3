@@ -44,7 +44,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
 
   crawler:
-    image: registry.usetech.ru/uniquenetwork/unique-explorer-api:v1.5.8
+    image: polkastats-backend:latest
     container_name: scan-crawler
     networks:
       - scan-net
