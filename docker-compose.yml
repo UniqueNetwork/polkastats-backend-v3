@@ -1,9 +1,8 @@
 version: "3"
 
 networks:
-  scan-net:
-    driver: bridge
-
+  market:
+    external: true
 services:
   scan-web-api:
     build:
@@ -13,7 +12,7 @@ services:
     ports:
       - "3031:3031"
     networks:
-      - scan-net
+      - market
     depends_on:
       - postgres
       - crawler
@@ -30,7 +29,7 @@ services:
     image: postgres:14.2-alpine
     container_name: scan-database
     networks:
-      - scan-net
+      - market
     environment:
       - POSTGRES_USER=polkastats
       - POSTGRES_PASSWORD=polkastats
@@ -47,7 +46,7 @@ services:
     image: polkastats-backend:latest
     container_name: scan-crawler
     networks:
-      - scan-net
+      - market
     depends_on:
       - postgres
     restart: on-failure
