@@ -17,6 +17,8 @@ import { CollectionsStats } from '@entities/CollectionsStats';
 import { EventModule } from './event/event.module';
 import { ExtrinsicModule } from './extrinsic/extrinsic.module';
 import { Extrinsic } from '@entities/Extrinsic';
+import { AccountModule } from './account/account.module';
+import { Account } from '@entities/Account';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { Extrinsic } from '@entities/Extrinsic';
         CollectionsStats,
         Event,
         Extrinsic,
+        Account,
       ],
     }),
     GraphQLModule.forRoot({
@@ -44,6 +47,7 @@ import { Extrinsic } from '@entities/Extrinsic';
     CollectionModule,
     EventModule,
     ExtrinsicModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],
