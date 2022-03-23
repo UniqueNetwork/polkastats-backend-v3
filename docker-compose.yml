@@ -52,8 +52,8 @@ services:
     restart: on-failure
     environment:
       - NODE_ENV=production
-      - WS_PROVIDER_URL=wss://quartz.unique.network
-      - TYPE_PROVIDER=quartz
+      - WS_PROVIDER_URL=${WS_PROVIDER_URL}
+      - TYPE_PROVIDER=${TYPE_PROVIDER}
       - POSTGRES_HOST=postgres
       - POSTGRES_USER=polkastats
       - POSTGRES_PASSWORD=polkastats
