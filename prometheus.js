@@ -35,8 +35,13 @@ function startServer(callback) {
   server.listen(prometheusPort, callback);
 }
 
+function closeServer(callback) {
+  server.close(callback);
+}
+
 module.exports = {
-  startServer
+  startServer,
+  closeServer
 }
 
 /*const server  = http.createServer(async (req, res) => {
