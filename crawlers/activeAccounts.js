@@ -1,7 +1,7 @@
 const { zip } = require('lodash')
 const { QueryTypes } = require('sequelize')
 const pino = require('pino');
-const { getAmount, normalizeSubstrateAddress } = require('../utils/utils.js');
+const { getAmount } = require('../utils/utils.js');
 
 const logger = pino();
 
@@ -98,7 +98,7 @@ const makeQuery = (state, block, timestamp) => {
   const nonce = balances.accountNonce.toString();
   const query = `
     INSERT INTO account (account_id, balances, available_balance, free_balance, locked_balance, nonce, timestamp, block_height, is_staking)
-    VALUES('${normalizeSubstrateAddress(id)}', '${JSONbalances}', '${availableBalance}', '${freeBalance}', '${lockedBalance}', '${nonce}',
+    VALUES('${id}', '${JSONbalances}', '${availableBalance}', '${freeBalance}', '${lockedBalance}', '${nonce}',
     '${timestamp}', '${block}', ${isStaking || false}) \
       ON CONFLICT   (account_id)\
       DO UPDATE\
