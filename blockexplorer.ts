@@ -1,10 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize } from 'sequelize/types';
-import { ICrawlerModule } from './config/config.js';
-import { Logger } from './utils/logger.js';
+import { ICrawlerModule } from './crawlers/crawlers.interfaces';
 
-const log = new Logger();
-
+// eslint-disable-next-line import/prefer-default-export
 export class BlockExplorer {
   constructor(
     private api: ApiPromise,
