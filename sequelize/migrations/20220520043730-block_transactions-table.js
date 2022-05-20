@@ -1,13 +1,13 @@
 'use strict';
 
-// - Почему она называется view_events
-// - К ней есть запросы с фронта или можно удалить
-// - Название новой таблицы balance_transactions, balance_updates, block_balance, block_transactions
-
+// Что такое extrinsic
+// Обсудить event.method и Transfer, Deposit, Withdraw
+// Обсудить fee|amount
+// 
 
 module.exports = {
   async up (queryInterface, Sequelize) {
-    await queryInterface.createTable('block_transactions', {
+    await queryInterface.createTable('block_transactions', { // block_balances
       block_index: {
         type: Sequelize.DataTypes.STRING,
         allowNull: false,
@@ -29,7 +29,7 @@ module.exports = {
     });
 
     // todo: Заполить данными из view_events
-    // todo: Дропнуть вью
+    // todo: Дропнуть вью или врапнуть таблицу
 
   },
 

@@ -119,5 +119,6 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  await blockListener.startBlockListening();
+  // await blockListener.startBlockListening();
+  await blockListener.blockProcessing(857962);
 }
