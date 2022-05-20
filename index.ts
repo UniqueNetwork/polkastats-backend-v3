@@ -7,7 +7,7 @@ import {
   dbConnect,
 } from './config/config';
 import { Logger } from './utils/logger';
-import { BlockExplorer } from './blockexplorer';
+import BlockExplorer from './blockexplorer';
 import runtimeTypes from './config/runtime_types.json';
 import { ProviderFactory } from './lib/providerAPI/providerAPI';
 import { startServer } from './prometheus';
@@ -35,7 +35,6 @@ async function getSequlize(sConnect) {
     log.error(error);
   }
 
-  console.log(db);
   return db;
 }
 

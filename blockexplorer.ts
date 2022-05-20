@@ -2,8 +2,7 @@ import { ApiPromise } from '@polkadot/api';
 import { Sequelize } from 'sequelize/types';
 import { ICrawlerModule } from './crawlers/crawlers.interfaces';
 
-// eslint-disable-next-line import/prefer-default-export
-export class BlockExplorer {
+export default class BlockExplorer {
   constructor(
     private api: ApiPromise,
     private sequelize: Sequelize,
