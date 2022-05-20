@@ -94,9 +94,10 @@ export class BlockListener {
       );
 
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
-      this.logger.info(
-        `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`
-      );
+      // todo: debug
+      // this.logger.info(
+      //   `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`
+      // );
       if (preEvent.section !== 'balances') {
         await this.eventFacade.save({
           type: preEvent.method,

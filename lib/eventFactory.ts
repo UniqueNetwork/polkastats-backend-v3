@@ -52,8 +52,9 @@ export class EventFactory {
       case EventTypes.TYPE_SCHEMA_VERSION_SET:
       case EventTypes.TYPE_VARIABLE_ONCHAIN_SCHEMA_SET:
         return new UpdateCollection(bridgeAPI, sequelize, data[0], timestamp);
-      default:
-        console.log(`Unknown type ${type}`);
+      // todo: debug
+      // default:
+      // console.log(`Unknown type ${type}`);
     }
   }
 
