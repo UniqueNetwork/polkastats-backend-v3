@@ -1,8 +1,8 @@
-import blockDB from '../lib/blockDB';
-import { ICrawlerModuleConstructorArgs } from '../config/config';
-import { BlockListener } from './blockListener';
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize } from 'sequelize/types';
+import blockDB from '../lib/blockDB';
+import { BlockListener } from './blockListener';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 class Rescanner extends BlockListener {
   constructor(

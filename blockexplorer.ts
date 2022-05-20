@@ -1,11 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize } from 'sequelize/types';
-import { ICrawlerModule } from './config/config.js';
-import { Logger } from './utils/logger.js';
+import { ICrawlerModule } from './crawlers/crawlers.interfaces';
 
-const log = new Logger();
-
-export class BlockExplorer {
+export default class BlockExplorer {
   constructor(
     private api: ApiPromise,
     private sequelize: Sequelize,

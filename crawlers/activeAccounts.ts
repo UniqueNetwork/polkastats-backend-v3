@@ -1,8 +1,8 @@
-import { ICrawlerModuleConstructorArgs } from '../config/config';
 import pino, { Logger } from 'pino';
 import { ApiPromise } from '@polkadot/api';
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
 import { getAmount, normalizeSubstrateAddress } from '../utils/utils';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 export interface IAccount {
   id: string;
@@ -25,7 +25,7 @@ class AccountsCrawler {
   }
 
   private async getAccountsIds(): Promise<string[]> {
-    const accounts =  await this.api.query.system.account.keys();
+    const accounts = await this.api.query.system.account.keys();
     const accountsIds = accounts.map((account) => account.args[0].toString());
     return accountsIds;
   }
@@ -38,7 +38,7 @@ class AccountsCrawler {
       freeBalance: getAmount(balances.freeBalance.toString()),
       lockedBalance: balances.lockedBalance.toString(),
       nonce: balances.accountNonce.toString(),
-    }
+    };
   }
 
   private async getCurrentBlockNumber(): Promise<number> {
@@ -101,7 +101,8 @@ class AccountsCrawler {
         block_height = :block_height;
     `;
 
-    await this.sequelize.query(query,
+    await this.sequelize.query(
+      query,
       {
         type: QueryTypes.INSERT,
         logging: false,
@@ -117,7 +118,7 @@ class AccountsCrawler {
           timestamp,
           block_height: currentBlockNumber,
         },
-      }
+      },
     );
   }
 }
@@ -128,5 +129,5 @@ export async function start({ api, sequelize, config }: ICrawlerModuleConstructo
   (async function run() {
     await crawler.start();
     setTimeout(() => run(), config.pollingTime);
-  })();
+  }());
 }

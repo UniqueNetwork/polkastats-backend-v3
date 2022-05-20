@@ -1,13 +1,13 @@
-import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import pino from 'pino';
-import { ICrawlerModuleConstructorArgs } from '../config/config';
+import { Sequelize } from 'sequelize/types';
+import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { Sequelize } from 'sequelize/types';
 import collectionDB from '../lib/collectionDB';
 import { getProtoBufRoot } from '../utils/protobuf';
 import tokenData from '../lib/tokenData';
 import tokenDB from '../lib/tokenDB';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 const logger = pino({ name: 'tokenListener' });
 
@@ -78,18 +78,17 @@ async function runTokensListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize: Seq
     const { tokens, destroyedTokens } = await getCollectionTokens(bridgeAPI, collection, tokensCount);
     await deleteTokens(collection.collectionId, destroyedTokens, sequelize);
     await saveTokens(tokens, sequelize);
-
   }
 }
 
 export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
-  const pollingTime = config.pollingTime;
-  const bridgeAPI = (new BridgeAPI(api)).bridgeAPI;
+  const { pollingTime } = config;
+  const { bridgeAPI } = new BridgeAPI(api);
 
   logger.info(`Starting token crawler with polling interval ${pollingTime / 1000} seconds...`);
 
-  (async function run() {    
+  (async function run() {
     await runTokensListener(bridgeAPI, sequelize);
-    setTimeout(() => run(), pollingTime)
-  })()
+    setTimeout(() => run(), pollingTime);
+  }());
 }

@@ -1,7 +1,7 @@
 import blockDB from '../lib/blockDB';
-import { ICrawlerModuleConstructorArgs } from '../config/config';
 import { BlockListener } from './blockListener';
 import blockData from '../lib/blockData';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 export interface IBlocksGap {
   gapStart: number;

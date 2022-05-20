@@ -1,24 +1,26 @@
 import { Logger, pino } from 'pino';
-import { EventFacade } from './eventFacade';
-import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import extrinsic from '../lib/extrinsics';
-import eventsData from '../lib/eventsData.js';
-import eventsDB from '../lib/eventsDB.js';
-import blockDB from '../lib/blockDB.js';
-import blockData from '../lib/blockData.js';
-import { ICrawlerModuleConstructorArgs } from './../config/config';
-import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize, Transaction } from 'sequelize/types';
+import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
+import extrinsic from '../lib/extrinsics';
+import eventsDB from '../lib/eventsDB';
+import blockDB from '../lib/blockDB';
+import blockData from '../lib/blockData';
+import eventsData from '../lib/eventsData';
+import { EventFacade } from './eventFacade';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 const loggerOptions = {
-  crawler: `blockListener`,
+  crawler: 'blockListener',
 };
 
 export class BlockListener {
   protected logger: Logger;
+
   protected bridgeApi: OpalAPI | TestnetAPI;
+
   private eventFacade: EventFacade;
 
   constructor(
@@ -74,7 +76,6 @@ export class BlockListener {
       this.logger.error(e);
       await transaction.rollback();
     }
-
   }
 
   async saveEvents(
@@ -84,16 +85,15 @@ export class BlockListener {
     transaction: Transaction,
   ): Promise<void> {
     for (const [index, event] of events.blockEvents.entries()) {
-      const preEvent = Object.assign(
-        {
-          block_number: blockNumber,
-          event_index: index,
-          timestamp,
-        },
-        eventsData.parseRecord({ ...event, blockNumber })
-      );
+      const preEvent = {
+        block_number: blockNumber,
+        event_index: index,
+        timestamp,
+        ...eventsData.parseRecord({ ...event, blockNumber }),
+      };
 
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
+
       // todo: debug
       // this.logger.info(
       //   `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`
@@ -117,7 +117,7 @@ export class BlockListener {
   }
 }
 
-export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
+export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
   await blockListener.startBlockListening();
 }
