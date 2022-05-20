@@ -1,11 +1,11 @@
-import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import { ICrawlerModuleConstructorArgs } from '../config/config';
 import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
 import pino from 'pino';
+import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import collectionData from '../lib/collectionData';
 import collectionDB from '../lib/collectionDB';
+import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 const logger = pino({ name: 'collectionListener' });
 
@@ -54,13 +54,13 @@ async function runCollectionsListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize
 }
 
 export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
-  const pollingTime = config.pollingTime;
-  const bridgeAPI = (new BridgeAPI(api)).bridgeAPI;
+  const { pollingTime } = config;
+  const { bridgeAPI } = new BridgeAPI(api);
 
   logger.info(`Starting collection crawler... Polling time are ${pollingTime / 1000} seconds.`);
 
   (async function run() {
     await runCollectionsListener(bridgeAPI, sequelize);
     setTimeout(() => run(), pollingTime);
-  })();
+  }());
 }

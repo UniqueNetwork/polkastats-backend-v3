@@ -1,16 +1,21 @@
-import { wait } from './utils/utils';
 import { Sequelize } from 'sequelize';
-import { wsProviderUrl, typeProvider, dbConnect, crawlers } from './config/config';
+import crawlers from './crawlers/crawlers';
+import { wait } from './utils/utils';
+import {
+  wsProviderUrl,
+  typeProvider,
+  dbConnect,
+} from './config/config';
 import { Logger } from './utils/logger';
-import { BlockExplorer } from './blockexplorer';
-import rtt from './config/runtime_types.json';
+import BlockExplorer from './blockexplorer';
+import runtimeTypes from './config/runtime_types.json';
 import { ProviderFactory } from './lib/providerAPI/providerAPI';
 import { startServer } from './prometheus';
 
 const log = new Logger();
 
 async function getSequlize(sConnect) {
-  const result = new Sequelize(
+  const db = new Sequelize(
     sConnect,
     {
       logging: false,
@@ -18,36 +23,36 @@ async function getSequlize(sConnect) {
         max: 60,
         min: 0,
         acquire: 120000,
-        idle: 100000
+        idle: 100000,
       },
     },
   );
+
   try {
-    await result.authenticate();
-    return result;
+    await db.authenticate();
   } catch (error) {
     log.error(error);
   }
+
+  return db;
 }
 
-
-async function getPolkadotAPI(wsProviderUrl, rtt) {
-  log.info(`Connecting to ${wsProviderUrl}`);
-  const provider = new ProviderFactory(wsProviderUrl, typeProvider);
+async function getPolkadotAPI(wsUrl, rtt) {
+  log.info(`Connecting to ${wsUrl}`);
+  const provider = new ProviderFactory(wsUrl, typeProvider);
   const api = await provider.getApi(rtt);
 
-
-  api.on("error", async (value) => {
+  api.on('error', async (value) => {
     log.error(value);
   });
 
-  api.on("disconnected", async (value) => {
+  api.on('disconnected', async (value) => {
     log.error(value);
   });
 
   await api.isReady;
 
-  log.info("API is ready!");
+  log.info('API is ready!');
 
   // Wait for node is synced
   let node;
@@ -56,7 +61,7 @@ async function getPolkadotAPI(wsProviderUrl, rtt) {
   } catch (e) {
     log.error({
       message: "Can't connect to node! Waiting 10s...",
-      name: "disconnect",
+      name: 'disconnect',
       stack: e.stack,
     });
     api.disconnect();
@@ -68,28 +73,30 @@ async function getPolkadotAPI(wsProviderUrl, rtt) {
 
   if (node && node.isSyncing.eq(false)) {
     // Node is synced!
-    log.info("Node is synced!");
+    log.info('Node is synced!');
     return api;
-  } else {
-    log.default("Node is not synced! Waiting 10s...");
-    api.disconnect();
-    await wait(10000);
   }
+  log.default('Node is not synced! Waiting 10s...');
+  api.disconnect();
+  await wait(10000);
+
   return api;
 }
 
 async function main() {
   const sequelize = await getSequlize(dbConnect);
-  const api = await getPolkadotAPI(wsProviderUrl, rtt);
+  const api = await getPolkadotAPI(wsProviderUrl, runtimeTypes);
   const blockExplorer = new BlockExplorer(api, sequelize, crawlers);
-  await blockExplorer.run()
+  await blockExplorer.run();
 
   startServer(() => {
-    log.info('Server running...')
+    log.info('Server running...');
   });
 }
 
 main().catch((error) => {
+  // eslint-disable-next-line no-console
   console.error(error);
+
   process.exit(-1);
 });
