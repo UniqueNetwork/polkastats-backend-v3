@@ -30,7 +30,6 @@ async function getSequlize(sConnect) {
 
   try {
     await db.authenticate();
-    // return db;
   } catch (error) {
     log.error(error);
   }
