@@ -10,8 +10,9 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
   postgres:
-    image: postgres:14
+    image: postgres:14.1
     restart: always
     volumes:
       - 'db-data:/var/lib/postgresql/data'
@@ -26,6 +27,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+
   #
   # Hasura
   #
