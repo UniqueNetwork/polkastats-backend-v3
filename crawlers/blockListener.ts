@@ -62,19 +62,21 @@ export class BlockListener {
         transaction,
       });
 
-      await extrinsic.save(
-        this.sequelize,
+      const parsedEvents = await this.saveEvents(events, blockNumber, timestamp, transaction);
+
+      await extrinsic.save({
+        sequelize: this.sequelize,
         blockNumber,
-        blockData.extrinsics,
-        events.blockEvents,
-        timestamp * 1000,
+        extrinsics: blockData.extrinsics,
+        parsedEvents,
+        timestampMs: timestamp * 1000,
         loggerOptions,
         transaction,
-      );
-
-      await this.saveEvents(events, blockNumber, timestamp, transaction);
+      });
 
       await transaction.commit();
+
+      process.exit(0);
     } catch (e) {
       this.logger.error(e);
       await transaction.rollback();
@@ -86,7 +88,9 @@ export class BlockListener {
     blockNumber: number,
     timestamp: number,
     transaction: Transaction,
-  ): Promise<void> {
+  ): Promise<Object[]> {
+    const parsedEvents = [];
+
     // eslint-disable-next-line no-restricted-syntax
     for (const [index, event] of events.blockEvents.entries()) {
       const preEvent = {
@@ -95,6 +99,21 @@ export class BlockListener {
         timestamp,
         ...parseEventRecord({ ...event, blockNumber }),
       };
+
+      const extrinsicIndex = parseInt(event.phase.toHuman().ApplyExtrinsic);
+      const {
+        section,
+        method,
+        amount,
+      } = preEvent;
+
+      parsedEvents.push({
+        blockNumber,
+        extrinsicIndex,
+        section,
+        method,
+        amount,
+      });
 
       // eslint-disable-next-line no-await-in-loop
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
@@ -113,6 +132,8 @@ export class BlockListener {
         });
       }
     }
+
+    return parsedEvents;
   }
 
   async _getBlockData(blockNumber: number) {
@@ -127,7 +148,7 @@ export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
   // await blockListener.startBlockListening();
   await blockListener.blockProcessing(
-    // 857962
-    135061,
+    857962,
+    // 135061,
   );
 }

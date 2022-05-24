@@ -7,9 +7,11 @@ export const EVENT_METHOD = {
   DEPOSIT: 'Deposit',
   WITHDRAW: 'Withdraw',
   ENDOWED: 'Endowed',
+  EXTRINSIC_SUCCESS: 'ExtrinsicSuccess',
 };
 
 export const EVENT_SECTION = {
+  SYSTEM: 'system',
   BALANCES: 'balances',
   TREASURY: 'treasury',
 };

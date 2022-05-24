@@ -1,5 +1,7 @@
-const BigNumber = require('bignumber.js');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { encodeAddress, decodeAddress } = require('@polkadot/util-crypto');
+const BigNumber = require('bignumber.js');
+const { EVENT_SECTION, EVENT_METHOD } = require('../constants');
 
 const ETHEREUM_ADDRESS_MAX_LENGTH = 42;
 
@@ -17,23 +19,39 @@ async function wait(ms) {
   });
 }
 
-function getExtrinsicSuccess(index, blockEvents) {
+function getExtrinsicSuccess(extrinsicParsedEvents) {
   // assume success if no events were extracted
-  if (blockEvents.length === 0) {
+  if (extrinsicParsedEvents.length === 0) {
     return true;
   }
+
   let extrinsicSuccess = false;
-  blockEvents.forEach((record) => {
-    const { event, phase } = record;
-    if (
-      parseInt(phase.toHuman().ApplyExtrinsic) === index
-      && event.section === 'system'
-      && event.method === 'ExtrinsicSuccess'
+  extrinsicParsedEvents.forEach((event) => {
+    const { section, method } = event;
+    if (section === EVENT_SECTION.SYSTEM && method === EVENT_METHOD.EXTRINSIC_SUCCESS
     ) {
       extrinsicSuccess = true;
     }
   });
   return extrinsicSuccess;
+}
+
+function getExtrinsicAmount(extrinsicParsedEvents) {
+  return extrinsicParsedEvents
+    .filter(({ section, method }) => section === EVENT_SECTION.BALANCES && method === EVENT_METHOD.TRANSFER)
+    .reduce((sum, { amount }) => {
+      const am = parseFloat(amount) || 0;
+      return sum + am;
+    }, 0);
+}
+
+function getExtrinsicFee(extrinsicParsedEvents) {
+  return extrinsicParsedEvents
+    .filter(({ section, method }) => section === EVENT_SECTION.TREASURY && method === EVENT_METHOD.DEPOSIT)
+    .reduce((sum, { amount }) => {
+      const am = parseFloat(amount) || 0;
+      return sum + am;
+    }, 0);
 }
 
 function getBuffer(aValue) {
@@ -127,6 +145,8 @@ module.exports = {
   parseHexToString,
   avoidUseBuffer,
   getExtrinsicSuccess,
+  getExtrinsicAmount,
+  getExtrinsicFee,
   bufferToJSON,
   getAmount,
   normalizeSubstrateAddress,

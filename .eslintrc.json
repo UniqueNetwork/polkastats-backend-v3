@@ -22,6 +22,12 @@
             "as-needed"
         ],
         "no-underscore-dangle": "off",
-        "no-plusplus": "off"
+        "no-plusplus": "off",
+        "max-len": [
+            "error",
+            {
+                "code": 120
+            }
+        ]
     }
 }
