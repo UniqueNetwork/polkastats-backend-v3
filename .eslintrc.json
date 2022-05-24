@@ -20,6 +20,8 @@
         "radix": [
             "error",
             "as-needed"
-        ]
+        ],
+        "no-underscore-dangle": "off",
+        "no-plusplus": "off"
     }
 }

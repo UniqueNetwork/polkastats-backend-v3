@@ -7,10 +7,11 @@ import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import extrinsic from '../lib/extrinsics';
 import eventsDB from '../lib/eventsDB';
 import blockDB from '../lib/blockDB';
-import blockData from '../lib/blockData';
-import eventsData from '../lib/eventsData';
+import { get as getBlockData } from '../lib/blockData';
+import { get as getEventsData, parseRecord as parseEventRecord } from '../lib/eventsData';
 import { EventFacade } from './eventFacade';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
+import { EVENT_SECTION } from '../constants';
 
 const loggerOptions = {
   crawler: 'blockListener',
@@ -42,11 +43,13 @@ export class BlockListener {
   }
 
   async blockProcessing(blockNumber: number): Promise<void> {
-    const blockData = await this.getBlockData(blockNumber);
-    const events = await eventsData.get({
+    const blockData = await this._getBlockData(blockNumber);
+
+    const events = await getEventsData({
       bridgeAPI: this.bridgeApi,
       blockHash: blockData.blockHash,
     });
+
     const timestamp = blockData.timestamp ? Math.floor(blockData.timestamp / 1000) : 0;
     const sessionLength = (this.bridgeApi.api.consts?.babe?.epochDuration || 0).toString();
 
@@ -84,21 +87,25 @@ export class BlockListener {
     timestamp: number,
     transaction: Transaction,
   ): Promise<void> {
+    // eslint-disable-next-line no-restricted-syntax
     for (const [index, event] of events.blockEvents.entries()) {
       const preEvent = {
         block_number: blockNumber,
         event_index: index,
         timestamp,
-        ...eventsData.parseRecord({ ...event, blockNumber }),
+        ...parseEventRecord({ ...event, blockNumber }),
       };
 
+      // eslint-disable-next-line no-await-in-loop
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
 
       // todo: debug
-      // this.logger.info(
-      //   `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`
-      // );
-      if (preEvent.section !== 'balances') {
+      this.logger.info(
+        `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`,
+      );
+
+      if (preEvent.section !== EVENT_SECTION.BALANCES) {
+        // eslint-disable-next-line no-await-in-loop
         await this.eventFacade.save({
           type: preEvent.method,
           data: preEvent._event.data.toJSON(),
@@ -109,8 +116,8 @@ export class BlockListener {
     }
   }
 
-  async getBlockData(blockNumber: number) {
-    return blockData.get({
+  async _getBlockData(blockNumber: number) {
+    return getBlockData({
       blockNumber,
       bridgeAPI: this.bridgeApi,
     });
@@ -119,6 +126,6 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  // await blockListener.startBlockListening();
-  await blockListener.blockProcessing(857962);
+  await blockListener.startBlockListening();
+  // await blockListener.blockProcessing(857962);
 }
