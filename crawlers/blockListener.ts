@@ -99,7 +99,6 @@ export class BlockListener {
       // eslint-disable-next-line no-await-in-loop
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
 
-      // todo: debug
       this.logger.info(
         `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`,
       );
@@ -126,6 +125,9 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  await blockListener.startBlockListening();
-  // await blockListener.blockProcessing(857962);
+  // await blockListener.startBlockListening();
+  await blockListener.blockProcessing(
+    // 857962
+    135061,
+  );
 }
