@@ -75,8 +75,6 @@ export class BlockListener {
       });
 
       await transaction.commit();
-
-      process.exit(0);
     } catch (e) {
       this.logger.error(e);
       await transaction.rollback();
@@ -146,9 +144,12 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  // await blockListener.startBlockListening();
-  await blockListener.blockProcessing(
-    857962,
-    // 135061,
-  );
+  await blockListener.startBlockListening();
+
+  // todo: debug purpose
+  // await blockListener.blockProcessing(
+  //   // 857962,
+  //   // 135061,
+  //   576642,
+  // );
 }
