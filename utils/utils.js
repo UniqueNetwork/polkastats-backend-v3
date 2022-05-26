@@ -1,14 +1,12 @@
-const pino = require("pino");
-const BigNumber = require("bignumber.js");
-const { QueryTypes } = require("sequelize");
+// eslint-disable-next-line import/no-extraneous-dependencies
 const { encodeAddress, decodeAddress } = require('@polkadot/util-crypto');
-
-const logger = pino();
+const BigNumber = require('bignumber.js');
+const { EventSection, EventMethod } = require('../constants');
 
 const ETHEREUM_ADDRESS_MAX_LENGTH = 42;
 
 function formatNumber(num) {
-  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function shortHash(hash) {
@@ -21,18 +19,16 @@ async function wait(ms) {
   });
 }
 
-function getExtrinsicSuccess(index, blockEvents) {
+function getExtrinsicSuccess(extrinsicParsedEvents) {
   // assume success if no events were extracted
-  if (blockEvents.length === 0) {
+  if (extrinsicParsedEvents.length === 0) {
     return true;
   }
+
   let extrinsicSuccess = false;
-  blockEvents.forEach((record) => {
-    const { event, phase } = record;
-    if (
-      parseInt(phase.toHuman().ApplyExtrinsic) === index &&
-      event.section === `system` &&
-      event.method === `ExtrinsicSuccess`
+  extrinsicParsedEvents.forEach((event) => {
+    const { section, method } = event;
+    if (section === EventSection.SYSTEM && method === EventMethod.EXTRINSIC_SUCCESS
     ) {
       extrinsicSuccess = true;
     }
@@ -40,79 +36,95 @@ function getExtrinsicSuccess(index, blockEvents) {
   return extrinsicSuccess;
 }
 
-function getBuffer(aValue) {  
-  return Buffer.from(aValue, "hex").toString("utf-8");
+function getExtrinsicAmount(extrinsicParsedEvents) {
+  return extrinsicParsedEvents
+    .filter(({ section, method }) => section === EventSection.BALANCES && method === EventMethod.TRANSFER)
+    .reduce((sum, { amount }) => {
+      const am = parseFloat(amount) || 0;
+      return sum + am;
+    }, 0);
+}
+
+function getExtrinsicFee(extrinsicParsedEvents) {
+  return extrinsicParsedEvents
+    .filter(({ section, method }) => section === EventSection.TREASURY && method === EventMethod.DEPOSIT)
+    .reduce((sum, { amount }) => {
+      const am = parseFloat(amount) || 0;
+      return sum + am;
+    }, 0);
+}
+
+function getBuffer(aValue) {
+  return Buffer.from(aValue, 'hex').toString('utf-8');
 }
 
 function avoidUseBuffer(buf) {
-    let str = '';
-    for (let i = 0, strLen = buf.length; i < strLen; i++) {
-      if (buf[i] !== 0) {
-        str += String.fromCharCode(buf[i]);
-      } else {
-        break;
-      }
+  let str = '';
+  for (let i = 0, strLen = buf.length; i < strLen; i++) {
+    if (buf[i] !== 0) {
+      str += String.fromCharCode(buf[i]);
+    } else {
+      break;
     }
-    return str;
+  }
+  return str;
 }
 
 function parseHexToString(value) {
   try {
-    const source = value.toString().replace("0x", "");
+    const source = value.toString().replace('0x', '');
     return getBuffer(source);
   } catch (error) {
-    return "";
+    return '';
   }
 }
 
 function bufferToString(value) {
   try {
     if (value.length === 0 || value.length <= 3) {
-      return "";
+      return '';
     }
-    if (value.join("").includes("123")) {
-      return "";
+    if (value.join('').includes('123')) {
+      return '';
     }
     return getBuffer(value);
   } catch (error) {
-    return "";
+    return '';
   }
 }
 
 function genArrayRange(min, max) {
   return Array.from(
     { length: max - min },
-    (_, i) => i + ((min === 0 ? -1 : min - 1) + 1)
+    (_, i) => i + ((min === 0 ? -1 : min - 1) + 1),
   );
 }
 
 /**
  * Convert buffer to JSON object
- * @param {string} value 
- * @returns 
+ * @param {string} value
+ * @returns
  */
- const bufferToJSON = function(value)  {
+function bufferToJSON(value) {
   try {
-    const data = parseHexToString(value)
-    let result = null;
-    if (data === '')  {
+    const data = parseHexToString(value);
+    const result = null;
+    if (data === '') {
       return result;
-    } else {
-      return (typeof JSON.parse(data) === 'object') ? data : null
-    }    
-  } catch (err) {    
+    }
+    return (typeof JSON.parse(data) === 'object') ? data : null;
+  } catch (err) {
     return null;
   }
 }
 
 function getAmount(strNum) {
-  
   BigNumber.config({
-    EXPONENTIAL_AT: [-30, 30]
+    EXPONENTIAL_AT: [-30, 30],
   });
 
-  let result = BigNumber(strNum);
-  let dividedBy = result.dividedBy('1000000000000000000').toString();
+  const result = BigNumber(strNum);
+  const dividedBy = result.dividedBy('1000000000000000000').toString();
   return dividedBy;
 }
 
@@ -124,7 +136,6 @@ function normalizeSubstrateAddress(address) {
   return encodeAddress(decodeAddress(address));
 }
 
-
 module.exports = {
   formatNumber,
   shortHash,
@@ -134,6 +145,8 @@ module.exports = {
   parseHexToString,
   avoidUseBuffer,
   getExtrinsicSuccess,
+  getExtrinsicAmount,
+  getExtrinsicFee,
   bufferToJSON,
   getAmount,
   normalizeSubstrateAddress,

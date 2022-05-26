@@ -20,6 +20,13 @@
         "radix": [
             "error",
             "as-needed"
+        ],
+        "no-plusplus": "off",
+        "max-len": [
+            "error",
+            {
+                "code": 120
+            }
         ]
     }
 }
