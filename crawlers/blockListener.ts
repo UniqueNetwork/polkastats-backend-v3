@@ -43,7 +43,7 @@ export class BlockListener {
   }
 
   async blockProcessing(blockNumber: number): Promise<void> {
-    const blockData = await this._getBlockData(blockNumber);
+    const blockData = await this.getBlockData(blockNumber);
 
     const events = await getEventsData({
       bridgeAPI: this.bridgeApi,
@@ -90,19 +90,19 @@ export class BlockListener {
     const parsedEvents = [];
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const [index, event] of events.blockEvents.entries()) {
+    for (const [eventIndex, event] of events.blockEvents.entries()) {
       const preEvent = {
-        block_number: blockNumber,
-        event_index: index,
+        blockNumber,
         timestamp,
+        eventIndex,
         ...parseEventRecord({ ...event, blockNumber }),
       };
 
-      const extrinsicIndex = parseInt(event.phase.toHuman().ApplyExtrinsic);
       const {
         section,
         method,
         amount,
+        extrinsicIndex,
       } = preEvent;
 
       parsedEvents.push({
@@ -117,15 +117,15 @@ export class BlockListener {
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
 
       this.logger.info(
-        `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`,
+        `Added event #${blockNumber}-${eventIndex} ${section} ➡ ${method}`,
       );
 
-      if (preEvent.section !== EVENT_SECTION.BALANCES) {
+      if (section !== EVENT_SECTION.BALANCES) {
         // eslint-disable-next-line no-await-in-loop
         await this.eventFacade.save({
-          type: preEvent.method,
-          data: preEvent._event.data.toJSON(),
-          timestamp: preEvent.timestamp,
+          type: method,
+          data: preEvent.rawEvent.data.toJSON(),
+          timestamp,
           transaction,
         });
       }
@@ -134,7 +134,7 @@ export class BlockListener {
     return parsedEvents;
   }
 
-  async _getBlockData(blockNumber: number) {
+  private async getBlockData(blockNumber: number) {
     return getBlockData({
       blockNumber,
       bridgeAPI: this.bridgeApi,
@@ -144,12 +144,12 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  await blockListener.startBlockListening();
+  // await blockListener.startBlockListening();
 
   // todo: debug purpose
-  // await blockListener.blockProcessing(
-  //   // 857962,
+  await blockListener.blockProcessing(
+    857962,
   //   // 135061,
   //   576642,
-  // );
+  );
 }
