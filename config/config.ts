@@ -26,3 +26,5 @@ export const firstBlock = process.env.FIRST_BLOCK || 0;
 export const DEFAULT_POLLING_TIME_MS = 60 * 60 * 1000;
 export const ACTIVE_ACCOUNTS_DEFAULT_POLLING_TIME_MS = 1 * 60 * 1000;
 export const DEFAULT_COUNT_OF_PARALLEL_TASKS = 50;
+
+export const IPFS_URI = process.env.IPFS_BASE_URL || 'https://ipfs.unique.network/ipfs/';
