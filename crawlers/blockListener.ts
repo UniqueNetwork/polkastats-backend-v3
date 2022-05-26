@@ -7,10 +7,11 @@ import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import extrinsic from '../lib/extrinsics';
 import eventsDB from '../lib/eventsDB';
 import blockDB from '../lib/blockDB';
-import blockData from '../lib/blockData';
-import eventsData from '../lib/eventsData';
+import { get as getBlockData } from '../lib/blockData';
+import { get as getEventsData, parseRecord as parseEventRecord } from '../lib/eventsData';
 import { EventFacade } from './eventFacade';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
+import { EventSection } from '../constants';
 
 const loggerOptions = {
   crawler: 'blockListener',
@@ -43,10 +44,12 @@ export class BlockListener {
 
   async blockProcessing(blockNumber: number): Promise<void> {
     const blockData = await this.getBlockData(blockNumber);
-    const events = await eventsData.get({
+
+    const events = await getEventsData({
       bridgeAPI: this.bridgeApi,
       blockHash: blockData.blockHash,
     });
+
     const timestamp = blockData.timestamp ? Math.floor(blockData.timestamp / 1000) : 0;
     const sessionLength = (this.bridgeApi.api.consts?.babe?.epochDuration || 0).toString();
 
@@ -59,17 +62,17 @@ export class BlockListener {
         transaction,
       });
 
-      await extrinsic.save(
-        this.sequelize,
+      const parsedEvents = await this.saveEvents(events, blockNumber, timestamp, transaction);
+
+      await extrinsic.save({
+        sequelize: this.sequelize,
         blockNumber,
-        blockData.extrinsics,
-        events.blockEvents,
-        timestamp * 1000,
+        extrinsics: blockData.extrinsics,
+        parsedEvents,
+        timestampMs: timestamp * 1000,
         loggerOptions,
         transaction,
-      );
-
-      await this.saveEvents(events, blockNumber, timestamp, transaction);
+      });
 
       await transaction.commit();
     } catch (e) {
@@ -83,32 +86,56 @@ export class BlockListener {
     blockNumber: number,
     timestamp: number,
     transaction: Transaction,
-  ): Promise<void> {
-    for (const [index, event] of events.blockEvents.entries()) {
+  ): Promise<Object[]> {
+    const parsedEvents = [];
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [eventIndex, event] of events.blockEvents.entries()) {
       const preEvent = {
-        block_number: blockNumber,
-        event_index: index,
+        blockNumber,
         timestamp,
-        ...eventsData.parseRecord({ ...event, blockNumber }),
+        eventIndex,
+        ...parseEventRecord({ ...event, blockNumber }),
       };
 
+      const {
+        section,
+        method,
+        amount,
+        extrinsicIndex,
+      } = preEvent;
+
+      parsedEvents.push({
+        blockNumber,
+        extrinsicIndex,
+        section,
+        method,
+        amount,
+      });
+
+      // eslint-disable-next-line no-await-in-loop
       await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
+
       this.logger.info(
-        `Added event #${blockNumber}-${index} ${preEvent.section} ➡ ${preEvent.method}`,
+        `Added event #${blockNumber}-${eventIndex} ${section} ➡ ${method}`,
       );
-      if (preEvent.section !== 'balances') {
+
+      if (section !== EventSection.BALANCES) {
+        // eslint-disable-next-line no-await-in-loop
         await this.eventFacade.save({
-          type: preEvent.method,
-          data: preEvent._event.data.toJSON(),
-          timestamp: preEvent.timestamp,
+          type: method,
+          data: preEvent.rawEvent.data.toJSON(),
+          timestamp,
           transaction,
         });
       }
     }
+
+    return parsedEvents;
   }
 
-  async getBlockData(blockNumber: number) {
-    return blockData.get({
+  private async getBlockData(blockNumber: number) {
+    return getBlockData({
       blockNumber,
       bridgeAPI: this.bridgeApi,
     });

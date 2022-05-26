@@ -1,5 +1,5 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import collectionData from '../collectionData';
+import { getCollectionById } from '../collectionData';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import eventsDB from '../eventsDB';
@@ -22,7 +22,7 @@ export abstract class EventCollection {
       return;
     }
 
-    const collection = await collectionData.get(this.collectionId, this.bridgeAPI);
+    const collection = await getCollectionById(this.collectionId, this.bridgeAPI);
     return {
       ...collection,
       date_of_creation: this.timestamp,
