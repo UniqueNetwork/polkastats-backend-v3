@@ -3,7 +3,7 @@ import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetA
 import { Sequelize } from 'sequelize/types';
 import pino from 'pino';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import collectionData from '../lib/collectionData';
+import { getCollectionById } from '../lib/collectionData';
 import collectionDB from '../lib/collectionDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
@@ -13,7 +13,7 @@ async function getCollections(bridgeAPI, maxCollectionId) {
   const collections = [];
   const destroyedCollections: number[] = [];
   for (let collectionId = 1; collectionId <= maxCollectionId; collectionId++) {
-    const collection = await collectionData.get(collectionId, bridgeAPI);
+    const collection = await getCollectionById(collectionId, bridgeAPI);
     if (collection) {
       collections.push(collection);
     } else {
@@ -26,22 +26,24 @@ async function getCollections(bridgeAPI, maxCollectionId) {
   };
 }
 
-async function saveCollections(collections: any[], sequelize: Sequelize) {
-  for (const collection of collections) {
+function saveCollections(collections: any[], sequelize: Sequelize) : Promise<any[]> {
+  return Promise.all(collections.map((collection) => {
     logger.debug(`Save collection with id: ${collection?.collection_id}`);
-    await collectionDB.save({
+
+    return collectionDB.save({
       collection,
       sequelize,
       excludeFields: ['date_of_creation'],
     });
-  }
+  }));
 }
 
-async function destroyCollections(collectionsIds: number[], sequelize: Sequelize) {
-  for (const collectionId of collectionsIds) {
+function destroyCollections(collectionsIds: number[], sequelize: Sequelize) : Promise<any[]> {
+  return Promise.all(collectionsIds.map((collectionId) => {
     logger.debug(`Remove collection with id: ${collectionId}`);
-    await collectionDB.del(collectionId, sequelize);
-  }
+
+    return collectionDB.del(collectionId, sequelize);
+  }));
 }
 
 async function runCollectionsListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize: Sequelize) {
@@ -49,10 +51,13 @@ async function runCollectionsListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize
   const { collections, destroyedCollections } = await getCollections(bridgeAPI, collectionsCount);
 
   await saveCollections(collections, sequelize);
+
   await destroyCollections(destroyedCollections, sequelize);
+
   logger.info(`Total count: ${collectionsCount}. Exist: ${collections.length}. Burned: ${destroyedCollections.length}`);
 }
 
+// eslint-disable-next-line import/prefer-default-export
 export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
   const { pollingTime } = config;
   const { bridgeAPI } = new BridgeAPI(api);
