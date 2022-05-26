@@ -1,4 +1,8 @@
-import { ACTIVE_ACCOUNTS_DEFAULT_POLLING_TIME_MS, DEFAULT_COUNT_OF_PARALLEL_TASKS, DEFAULT_POLLING_TIME_MS } from '../config/config';
+import {
+  ACTIVE_ACCOUNTS_DEFAULT_POLLING_TIME_MS,
+  DEFAULT_COUNT_OF_PARALLEL_TASKS,
+  DEFAULT_POLLING_TIME_MS,
+} from '../config/config';
 import { start as systemStart } from './system';
 import { start as repairDataFromBlocksStart } from './repairDataFromBlocks';
 import { start as blockListenerStart } from './blockListener';
