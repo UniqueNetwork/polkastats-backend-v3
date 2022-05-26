@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { encodeAddress, decodeAddress } = require('@polkadot/util-crypto');
 const BigNumber = require('bignumber.js');
-const { EVENT_SECTION, EVENT_METHOD } = require('../constants');
+const { EventSection, EventMethod } = require('../constants');
 
 const ETHEREUM_ADDRESS_MAX_LENGTH = 42;
 
@@ -28,7 +28,7 @@ function getExtrinsicSuccess(extrinsicParsedEvents) {
   let extrinsicSuccess = false;
   extrinsicParsedEvents.forEach((event) => {
     const { section, method } = event;
-    if (section === EVENT_SECTION.SYSTEM && method === EVENT_METHOD.EXTRINSIC_SUCCESS
+    if (section === EventSection.SYSTEM && method === EventMethod.EXTRINSIC_SUCCESS
     ) {
       extrinsicSuccess = true;
     }
@@ -38,7 +38,7 @@ function getExtrinsicSuccess(extrinsicParsedEvents) {
 
 function getExtrinsicAmount(extrinsicParsedEvents) {
   return extrinsicParsedEvents
-    .filter(({ section, method }) => section === EVENT_SECTION.BALANCES && method === EVENT_METHOD.TRANSFER)
+    .filter(({ section, method }) => section === EventSection.BALANCES && method === EventMethod.TRANSFER)
     .reduce((sum, { amount }) => {
       const am = parseFloat(amount) || 0;
       return sum + am;
@@ -47,7 +47,7 @@ function getExtrinsicAmount(extrinsicParsedEvents) {
 
 function getExtrinsicFee(extrinsicParsedEvents) {
   return extrinsicParsedEvents
-    .filter(({ section, method }) => section === EVENT_SECTION.TREASURY && method === EVENT_METHOD.DEPOSIT)
+    .filter(({ section, method }) => section === EventSection.TREASURY && method === EventMethod.DEPOSIT)
     .reduce((sum, { amount }) => {
       const am = parseFloat(amount) || 0;
       return sum + am;

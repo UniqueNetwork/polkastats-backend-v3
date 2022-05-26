@@ -11,7 +11,7 @@ import { get as getBlockData } from '../lib/blockData';
 import { get as getEventsData, parseRecord as parseEventRecord } from '../lib/eventsData';
 import { EventFacade } from './eventFacade';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
-import { EVENT_SECTION } from '../constants';
+import { EventSection } from '../constants';
 
 const loggerOptions = {
   crawler: 'blockListener',
@@ -120,7 +120,7 @@ export class BlockListener {
         `Added event #${blockNumber}-${eventIndex} ${section} ➡ ${method}`,
       );
 
-      if (section !== EVENT_SECTION.BALANCES) {
+      if (section !== EventSection.BALANCES) {
         // eslint-disable-next-line no-await-in-loop
         await this.eventFacade.save({
           type: method,
@@ -144,12 +144,5 @@ export class BlockListener {
 
 export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
   const blockListener = new BlockListener(api, sequelize);
-  // await blockListener.startBlockListening();
-
-  // todo: debug purpose
-  await blockListener.blockProcessing(
-    857962,
-  //   // 135061,
-  //   576642,
-  );
+  await blockListener.startBlockListening();
 }
