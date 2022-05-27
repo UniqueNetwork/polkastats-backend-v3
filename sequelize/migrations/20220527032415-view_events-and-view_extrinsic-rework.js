@@ -8,20 +8,6 @@ module.exports = {
       
       await queryInterface.sequelize.query('DROP VIEW view_events;', { transaction });
 
-      // todo: Эта вьюха теперь вообще нужна?
-      await queryInterface.sequelize.query(
-        `
-        CREATE OR REPLACE VIEW public.view_events
-        AS SELECT 
-          block_index,
-          block_number,
-          amount,
-          fee
-        FROM extrinsic;
-        `,
-        { transaction },
-      );
-
       await queryInterface.sequelize.query(
         `
         CREATE OR REPLACE VIEW public.view_extrinsic
