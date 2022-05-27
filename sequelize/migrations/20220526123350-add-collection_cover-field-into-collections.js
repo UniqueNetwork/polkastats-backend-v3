@@ -7,8 +7,6 @@ module.exports = {
       length: 255,
       allowNull: true
     });
-
-    // todo: Fill collection_cover data
   },
 
   down (queryInterface, Sequelize) {
