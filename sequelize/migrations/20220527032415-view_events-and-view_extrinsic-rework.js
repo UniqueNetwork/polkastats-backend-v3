@@ -43,7 +43,7 @@ module.exports = {
     try {
       await queryInterface.sequelize.query('DROP VIEW view_extrinsic;', { transaction });
 
-      await queryInterface.sequelize.query('DROP VIEW view_events;', { transaction });
+      // await queryInterface.sequelize.query('DROP VIEW view_events;', { transaction });
 
       await queryInterface.sequelize.query(
         `
