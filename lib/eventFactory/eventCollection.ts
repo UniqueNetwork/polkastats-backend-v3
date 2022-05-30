@@ -1,12 +1,12 @@
-import collectionData from '../../lib/collectionData';
 import { Sequelize, Transaction } from 'sequelize/types';
-import { OpalAPI } from '../../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import eventsDB from '../../lib/eventsDB';
+import { getCollectionById } from '../collectionData';
+import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import eventsDB from '../eventsDB';
 import { EventTypes } from './type';
 
 export abstract class EventCollection {
-  constructor (
+  constructor(
     protected bridgeAPI: OpalAPI | TestnetAPI,
     protected sequelize: Sequelize,
     public collectionId: number,
@@ -22,7 +22,7 @@ export abstract class EventCollection {
       return;
     }
 
-    const collection = await collectionData.get(this.collectionId, this.bridgeAPI);
+    const collection = await getCollectionById(this.collectionId, this.bridgeAPI);
     return {
       ...collection,
       date_of_creation: this.timestamp,

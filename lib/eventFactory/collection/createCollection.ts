@@ -1,6 +1,6 @@
-import { EventCollection } from '../eventCollection';
-import collectionDB from '../../../lib/collectionDB';
 import { Transaction } from 'sequelize/types';
+import { EventCollection } from '../eventCollection';
+import collectionDB from '../../collectionDB';
 
 export class CreateCollection extends EventCollection {
   public async save(transaction: Transaction): Promise<void> {
@@ -20,5 +20,4 @@ export class CreateCollection extends EventCollection {
       });
     }
   }
-
 }

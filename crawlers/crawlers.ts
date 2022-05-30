@@ -8,7 +8,7 @@ import { start as repairDataFromBlocksStart } from './repairDataFromBlocks';
 import { start as blockListenerStart } from './blockListener';
 import { start as activeAccountsStart } from './activeAccounts';
 import { start as chainStart } from './chain';
-import { start as collectionListenerStart } from './collectionListener';
+import collectionsScanner from './collectionsScanner';
 import { start as tokenListenerStart } from './tokenListener';
 import { start as oldBlockListenerStart } from './oldBlockListener';
 import { ICrawlerModule } from './crawlers.interfaces';
@@ -52,7 +52,7 @@ const crawlers: ICrawlerModule[] = [
   },
   {
     enabled: !process.env.CRAWLER_COLLECTION_DISABLE,
-    start: collectionListenerStart,
+    start: collectionsScanner.start.bind(collectionsScanner),
     config: {
       pollingTime:
         parseInt(process.env.CRAWLER_COLLECTION_POLLING_TIME_MS)

@@ -1,3 +1,8 @@
+export enum SchemaVersion {
+  IMAGE_URL = 'ImageURL',
+  UNIQUE = 'Unique',
+}
+
 export enum EventPhase {
   INITIALIZATION = 'Initialization',
 }
