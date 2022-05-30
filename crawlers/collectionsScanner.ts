@@ -14,7 +14,7 @@ class CollectionsScanner {
 
   private bridgeApi: OpalAPI | TestnetAPI;
 
-  constructor({ logger }) {
+  constructor({ logger } : { logger: Logger }) {
     this.logger = logger;
   }
 
@@ -65,10 +65,8 @@ class CollectionsScanner {
 
   /**
    * Runs full collections scan every 'pollingTime' ms.
-   *
-   * @param {number} pollingTime
    */
-  private async run(pollingTime) {
+  private async run(pollingTime: number) {
     await this.scanCollections();
     setTimeout(() => this.run(pollingTime), pollingTime);
   }
