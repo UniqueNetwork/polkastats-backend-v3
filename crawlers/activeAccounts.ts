@@ -36,7 +36,7 @@ class AccountsCrawler {
       balances: JSON.stringify(balances),
       availableBalance: getAmount(balances.availableBalance.toString()),
       freeBalance: getAmount(balances.freeBalance.toString()),
-      lockedBalance: balances.lockedBalance.toString(),
+      lockedBalance: getAmount(balances.lockedBalance.toString()),
       nonce: balances.accountNonce.toString(),
     };
   }
@@ -62,6 +62,7 @@ class AccountsCrawler {
             .map((accountId) => this.accountProcessing(accountId, currentBlockNumber, transaction)),
         );
       }
+
       transaction.commit();
     } catch (e) {
       transaction.rollback();
