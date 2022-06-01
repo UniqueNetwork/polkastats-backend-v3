@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize/types';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import collectionDB from '../lib/collectionDB';
+import collectionDB from '../lib/collection/collectionDB';
 import { getProtoBufRoot } from '../utils/protobuf';
 import tokenData from '../lib/tokenData';
 import tokenDB from '../lib/tokenDB';

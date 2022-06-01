@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize/types';
-import collectionDB from '../../collectionDB';
+import collectionDB from '../../collection/collectionDB';
 import { EventCollection } from '../eventCollection';
 
 export class DestroyCollection extends EventCollection {

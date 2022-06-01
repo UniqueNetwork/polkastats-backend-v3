@@ -1,49 +1,44 @@
-import { AbstractAPI } from './abstractAPI';
+// import { UpDataStructsRpcCollection } from '@unique-nft/types';
+import { capitalizeAndMapObject } from '../../../../utils/utils';
+import AbstractAPI from './abstractAPI';
 
-export class OpalAPI extends AbstractAPI {  
+export class OpalAPI extends AbstractAPI {
   async getCollection(id) {
-    let collecton = await this.impl.impGetCollection(id);
-    if (collecton) {
-      collecton = this.capitalizeObject(collecton, (item, key) => {
-        if (key === 'limits') {
-          const limits = item[key];
-          item[key] = this.capitalizeObject(limits, (limit, i) => limit[i])
-        }
-        return item[key];
-      });      
-    }
-    return collecton; 
-  }
-    
-  capitalizeObject(obj, fn) {
-    return Object.keys(obj).reduce((res, key) => {
-      res[this.capitalizeFirstLetter(key)] = fn(obj, key);
-      return res;
-    }, {});
-  }
+    const collection = await this.impl.impGetCollection(id);
 
-  capitalizeFirstLetter (str = '') {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  } 
+    // if (collecton) {
+    //   collecton = capitalizeAndMapObject(collecton, (item, key) => {
+    //     if (key === 'limits') {
+    //       // Capitalize 'limits' object too
+    //       const limits = item[key];
+    //       // eslint-disable-next-line no-param-reassign
+    //       item[key] = capitalizeAndMapObject(limits, (limit, i) => limit[i]);
+    //     }
+    //     return item[key];
+    //   });
+    // }
+    return collection || null;
+  }
 
   async getToken(collectionId, tokenId) {
     let token = await this.impl.impGetToken(collectionId, tokenId);
-    token = this.capitalizeObject(token, (item, key) => {
-      if (key === 'owner') {        
-        let owner = item[key];        
-        item[key] = Object.keys(owner).map((_k) => owner[_k])[0];       
+    token = capitalizeAndMapObject(token, (item, key) => {
+      if (key === 'owner') {
+        const owner = item[key];
+        // Get only first values by every key
+        // eslint-disable-next-line no-param-reassign
+        item[key] = Object.entries(owner).reduce((acc, [k, v]) => { acc = { ...acc, [k]: v[0] }; return acc; }, {});
       }
       return item[key];
     });
     return token;
   }
 
-  async getCollectionCount() {
-    const count = await this.impl.impGetCollectionCount();
-    return count;
+  getCollectionCount() {
+    return this.impl.impGetCollectionCount();
   }
 
-  async getTokenCount(collectionId) {
-    return await this.impl.impGetTokenCount(collectionId);
+  getTokenCount(collectionId) {
+    return this.impl.impGetTokenCount(collectionId);
   }
 }

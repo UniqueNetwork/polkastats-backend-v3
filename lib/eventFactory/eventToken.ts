@@ -1,16 +1,15 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { bufferToJSON } from '../../utils/utils';
-import  protobuf from '../../utils/protobuf';
-import { OpalAPI } from '../../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Root } from 'protobufjs';
-import collectionDB from '../../lib/collectionDB';
-import eventsDB from '../../lib/eventsDB';
+import { bufferToJSON } from '../../utils/utils';
+import protobuf from '../../utils/protobuf';
+import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import collectionDB from '../collection/collectionDB';
+import eventsDB from '../eventsDB';
 import { EventTypes } from './type';
 
-
 export class EventToken {
-  constructor (
+  constructor(
     protected bridgeAPI: OpalAPI | TestnetAPI,
     protected sequelize: Sequelize,
     public collectionId: number,
@@ -35,7 +34,7 @@ export class EventToken {
       data: this.getConstData(token.ConstData, tokenSchema),
     };
   }
-  
+
   private parseConstData(constData, schema) {
     const buffer = Buffer.from(constData.replace('0x', ''), 'hex');
     if (buffer.toString().length !== 0 && constData.replace('0x', '') && schema !== null) {
@@ -51,15 +50,15 @@ export class EventToken {
   }
 
   private getDeserializeConstData(statement) {
-    let result = {};
+    const result = {};
     if ('buffer' in statement) {
       try {
         return protobuf.deserializeNFT(statement);
       } catch (error) {
         console.error(error);
         return {
-          hex: statement.constData?.toString().replace('0x', '') || statement.constData
-        }
+          hex: statement.constData?.toString().replace('0x', '') || statement.constData,
+        };
       }
     }
 
@@ -75,15 +74,18 @@ export class EventToken {
     const collectionFromDB = await collectionDB.get({
       collectionId: this.collectionId,
       selectList: ['collection_id', 'const_chain_schema'],
-      sequelize: this.sequelize
+      sequelize: this.sequelize,
     });
 
     if (collectionFromDB) {
       return protobuf.getProtoBufRoot(collectionFromDB.const_chain_schema);
     }
 
-    const collection = await this.bridgeAPI.getCollection(this.collectionId);
-    return protobuf.getProtoBufRoot(bufferToJSON(collection.ConstOnChainSchema));
+    // todo: Debug
+    // const collection = await this.bridgeAPI.getCollection(this.collectionId);
+
+    return null;
+    // return protobuf.getProtoBufRoot(bufferToJSON(collection.ConstOnChainSchema));
   }
 
   protected async canSave(): Promise<boolean> {

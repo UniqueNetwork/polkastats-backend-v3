@@ -1,5 +1,5 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { getCollectionById } from '../collectionData';
+import { getCollectionById } from '../collection/collectionData';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import eventsDB from '../eventsDB';

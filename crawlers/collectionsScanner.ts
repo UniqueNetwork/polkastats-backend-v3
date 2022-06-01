@@ -3,8 +3,8 @@ import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetA
 import { Sequelize } from 'sequelize/types';
 import pino, { Logger } from 'pino';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import { getCollectionById } from '../lib/collectionData';
-import collectionDB from '../lib/collectionDB';
+import { getCollectionById } from '../lib/collection/collectionData';
+import collectionDB from '../lib/collection/collectionDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 class CollectionsScanner {
@@ -41,26 +41,35 @@ class CollectionsScanner {
     this.logger.info('Run full scan');
 
     const collectionsCount = await this.bridgeApi.getCollectionCount();
-    let existingCollectionCount = 0;
-    let burnedCollectionCount = 0;
+    const existingCollectionCount = 0;
+    const burnedCollectionCount = 0;
 
-    for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
-      const collection = await getCollectionById(collectionId, this.bridgeApi);
+    const collection = await getCollectionById(60, this.bridgeApi);
 
-      if (collection) {
-        await this.saveCollection(collection);
-        existingCollectionCount++;
-      } else {
-        await this.deleteCollection(collectionId);
-        burnedCollectionCount++;
-      }
-    }
+    console.log('Final collection', collection);
+
+    // for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
+    //   const collection = await getCollectionById(collectionId, this.bridgeApi);
+
+    //   // console.log(collection);
+    //   // process.exit(0);
+
+    //   // if (collection) {
+    //   //   await this.saveCollection(collection);
+    //   //   existingCollectionCount++;
+    //   // } else {
+    //   //   await this.deleteCollection(collectionId);
+    //   //   burnedCollectionCount++;
+    //   // }
+    // }
 
     this.logger.info({
       collectionsCount,
       existingCollectionCount,
       burnedCollectionCount,
     }, 'Full scan done!');
+
+    process.exit(0);
   }
 
   /**

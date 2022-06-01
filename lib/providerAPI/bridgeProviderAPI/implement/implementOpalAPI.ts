@@ -1,33 +1,36 @@
-import { ImplementorAPI } from './implementorAPI';
+import ImplementorAPI from './implementorAPI';
 
 export class ImplementOpalAPI extends ImplementorAPI {
   async impGetCollection(collectionId) {
-    const collection = await this._api.rpc.unique.collectionById(collectionId);
-    return this.toObject(collection);
+    const result = await this.api.rpc.unique.collectionById(collectionId);
+    return result.isSome ? result.value : null;
   }
 
   async impGetCollectionCount() {
-    const collectionStats = await this._api.rpc.unique.collectionStats();
+    const collectionStats = await this.api.rpc.unique.collectionStats();
     return collectionStats?.created.toNumber();
   }
 
   async impGetToken(collectionId, tokenId) {
-    const tokenData = await this._api.query.nonfungible.tokenData(collectionId, tokenId);
-    const data = tokenData.toJSON();
+    const tokenData = await this.api.query.nonfungible.tokenData(collectionId, tokenId);
 
-    let constData = await this._api.rpc.unique.constMetadata(
-      collectionId,
-      tokenId
-    );
-    let variableMetadata = await this._api.rpc.unique.variableMetadata(
-      collectionId,
-      tokenId
-    );
+    // todo: remove me
+    interface IObjectWithOwner {
+      owner?: string;
+    }
+    const data = tokenData.toJSON() as IObjectWithOwner;
 
-    const owner: string = data && data['owner'];
+    const constData = await this.api.rpc.unique.constMetadata(
+      collectionId,
+      tokenId,
+    );
+    const variableMetadata = await this.api.rpc.unique.variableMetadata(
+      collectionId,
+      tokenId,
+    );
 
     return {
-      owner,
+      owner: data?.owner,
       constData: constData.toJSON(),
       variableData: variableMetadata.toJSON(),
     };
@@ -35,7 +38,7 @@ export class ImplementOpalAPI extends ImplementorAPI {
 
   async impGetTokenCount(collectionId) {
     const count = (
-      await this._api.rpc.unique.lastTokenId(collectionId)
+      await this.api.rpc.unique.lastTokenId(collectionId)
     ).toJSON();
     return count;
   }
