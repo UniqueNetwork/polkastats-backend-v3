@@ -52,9 +52,6 @@ class CollectionsScanner {
     for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
       const collection = await getCollectionById(collectionId, this.bridgeApi);
 
-      // console.log('collectionId', collectionId, collection);
-      // process.exit(0);
-
       try {
         if (collection) {
           await this.saveCollection(collection);
@@ -80,6 +77,7 @@ class CollectionsScanner {
    */
   private async run(pollingTime: number) {
     await this.scanCollections();
+
     setTimeout(() => this.run(pollingTime), pollingTime);
   }
 
@@ -91,7 +89,7 @@ class CollectionsScanner {
 
     const { pollingTime } = config;
 
-    this.logger.info(`Starting collection crawler... Polling time is ${pollingTime / 1000} seconds.`);
+    this.logger.info(`Starting collections crawler... Polling time is ${pollingTime / 1000} seconds.`);
 
     this.run(pollingTime);
   }

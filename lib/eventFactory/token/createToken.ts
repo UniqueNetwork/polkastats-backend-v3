@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize/types';
-import tokenDB from '../../token/tokenDB';
+import { save as saveTokenDb } from '../../token/tokenDB';
 import { EventToken } from '../eventToken';
 
 export class CreateToken extends EventToken {
@@ -8,7 +8,7 @@ export class CreateToken extends EventToken {
 
     if (canCreateNewToken) {
       const token = await this.getToken();
-      await tokenDB.save({
+      await saveTokenDb({
         token,
         transaction,
         sequelize: this.sequelize,
