@@ -5,18 +5,6 @@ import AbstractAPI from './abstractAPI';
 export class OpalAPI extends AbstractAPI {
   async getCollection(id) {
     const collection = await this.impl.impGetCollection(id);
-
-    // if (collecton) {
-    //   collecton = capitalizeAndMapObject(collecton, (item, key) => {
-    //     if (key === 'limits') {
-    //       // Capitalize 'limits' object too
-    //       const limits = item[key];
-    //       // eslint-disable-next-line no-param-reassign
-    //       item[key] = capitalizeAndMapObject(limits, (limit, i) => limit[i]);
-    //     }
-    //     return item[key];
-    //   });
-    // }
     return collection || null;
   }
 

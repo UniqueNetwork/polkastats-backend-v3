@@ -10,7 +10,7 @@ import {
   ICollectionDB,
   ICollectionDBFieldsLimit,
   ICollectionDBFieldsSchema,
-} from './collection';
+} from './collectionDB.interface';
 
 function processSponsorship(collection: UpDataStructsRpcCollection): { sponsorship: string | null } {
   const { sponsorship } = collection;
@@ -108,11 +108,12 @@ function processTokenPropertyPermissions(collection: UpDataStructsRpcCollection)
 }
 
 function getCollectionDbData(collectionId: number, collection: UpDataStructsRpcCollection): ICollectionDB {
-  console.log('getCollectionDbData', collectionId, collection.toJSON());
+  // console.log('rawCollection toJSON()', collectionId, collection.toJSON());
 
   return {
     collection_id: collectionId,
     owner: collection.owner.toString(),
+    owner_normalized: '', // This value will be calculated while saving
     name: avoidUseBuffer(collection.name),
     description: avoidUseBuffer(collection.description),
     token_prefix: collection.tokenPrefix.toUtf8(),

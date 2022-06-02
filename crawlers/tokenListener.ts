@@ -3,7 +3,7 @@ import { Sequelize } from 'sequelize/types';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import collectionDB from '../lib/collection/collectionDB';
+import { get as getCollectionDb } from '../lib/collection/collectionDB';
 import { getProtoBufRoot } from '../utils/protobuf';
 import tokenData from '../lib/tokenData';
 import tokenDB from '../lib/tokenDB';
@@ -12,7 +12,7 @@ import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 const logger = pino({ name: 'tokenListener' });
 
 async function getCollections(sequelize: Sequelize): Promise<{ collectionId: number, schema: any }[]> {
-  const collections = await collectionDB.get({
+  const collections = await getCollectionDb({
     selectList: ['collection_id', 'const_chain_schema'],
     sequelize,
   });

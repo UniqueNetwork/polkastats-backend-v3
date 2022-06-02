@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize/types';
 import { EventCollection } from '../eventCollection';
-import collectionDB from '../../collection/collectionDB';
+import { save as saveCollectionDb } from '../../collection/collectionDB';
 
 export class CreateCollection extends EventCollection {
   public async save(transaction: Transaction): Promise<void> {
@@ -13,7 +13,7 @@ export class CreateCollection extends EventCollection {
     const collection = await this.getCollection();
 
     if (collection) {
-      await collectionDB.save({
+      await saveCollectionDb({
         collection,
         sequelize: this.sequelize,
         transaction,

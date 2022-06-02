@@ -4,7 +4,7 @@ import { bufferToJSON } from '../../utils/utils';
 import protobuf from '../../utils/protobuf';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import collectionDB from '../collection/collectionDB';
+import { get as getCollectionDb } from '../collection/collectionDB';
 import eventsDB from '../eventsDB';
 import { EventTypes } from './type';
 
@@ -71,7 +71,7 @@ export class EventToken {
   }
 
   private async getTokenSchema(): Promise<Root> {
-    const collectionFromDB = await collectionDB.get({
+    const collectionFromDB = await getCollectionDb({
       collectionId: this.collectionId,
       selectList: ['collection_id', 'const_chain_schema'],
       sequelize: this.sequelize,

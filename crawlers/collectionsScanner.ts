@@ -2,9 +2,10 @@ import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
 import pino, { Logger } from 'pino';
+import { ICollectionDB } from '../lib/collection/collectionDB.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { getCollectionById } from '../lib/collection/collectionData';
-import collectionDB from '../lib/collection/collectionDB';
+import { save as saveCollectionDb, del as delCollectionDb } from '../lib/collection/collectionDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 class CollectionsScanner {
@@ -18,10 +19,10 @@ class CollectionsScanner {
     this.logger = logger;
   }
 
-  private saveCollection(collection: any) : Promise<any> {
-    this.logger.debug(`Save collection with id: ${collection?.collection_id}`);
+  private saveCollection(collection: ICollectionDB) : Promise<any> {
+    this.logger.debug(`Save collection with id: ${collection.collection_id}`);
 
-    return collectionDB.save({
+    return saveCollectionDb({
       collection,
       sequelize: this.sequelize,
       excludeFields: ['date_of_creation'],
@@ -31,7 +32,7 @@ class CollectionsScanner {
   private deleteCollection(collectionId: number) : Promise<any> {
     this.logger.debug(`Delete collection with id: ${collectionId}`);
 
-    return collectionDB.del({
+    return delCollectionDb({
       collectionId,
       sequelize: this.sequelize,
     });
@@ -41,33 +42,39 @@ class CollectionsScanner {
     this.logger.info('Run full scan');
 
     const collectionsCount = await this.bridgeApi.getCollectionCount();
-    const existingCollectionCount = 0;
-    const burnedCollectionCount = 0;
+    const counts = {
+      total: collectionsCount,
+      updated: 0,
+      deleted: 0,
+      failed: 0,
+    };
 
-    const collection = await getCollectionById(60, this.bridgeApi);
+    // const collectionId = 60;
+    // const collection = await getCollectionById(collectionId, this.bridgeApi);
 
-    console.log('Final collection', collection);
+    for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
+      const collection = await getCollectionById(collectionId, this.bridgeApi);
 
-    // for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
-    //   const collection = await getCollectionById(collectionId, this.bridgeApi);
+      console.log('collectionId', collectionId);
 
-    //   // console.log(collection);
-    //   // process.exit(0);
+      try {
+        if (collection) {
+          await this.saveCollection(collection);
+          counts.updated++;
+        } else {
+          await this.deleteCollection(collectionId);
+          counts.deleted++;
+        }
+      } catch (error) {
+        counts.failed++;
+        this.logger.error({
+          collectionId,
+          message: error?.message,
+        }, 'Update collection error');
+      }
+    }
 
-    //   // if (collection) {
-    //   //   await this.saveCollection(collection);
-    //   //   existingCollectionCount++;
-    //   // } else {
-    //   //   await this.deleteCollection(collectionId);
-    //   //   burnedCollectionCount++;
-    //   // }
-    // }
-
-    this.logger.info({
-      collectionsCount,
-      existingCollectionCount,
-      burnedCollectionCount,
-    }, 'Full scan done!');
+    this.logger.info(counts, 'Full scan done!');
 
     process.exit(0);
   }
