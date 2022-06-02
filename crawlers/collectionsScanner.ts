@@ -49,13 +49,10 @@ class CollectionsScanner {
       failed: 0,
     };
 
-    // const collectionId = 60;
-    // const collection = await getCollectionById(collectionId, this.bridgeApi);
-
     for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
       const collection = await getCollectionById(collectionId, this.bridgeApi);
 
-      console.log('collectionId', collectionId);
+      // console.log('collectionId', collectionId);
 
       try {
         if (collection) {
