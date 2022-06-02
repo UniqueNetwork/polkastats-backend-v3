@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-import { UpDataStructsRpcCollection } from '@unique-nft/types';
+import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/types';
 import ImplementorAPI from '../implement/implementorAPI';
 
 export default class AbstractAPI {
@@ -14,7 +14,7 @@ export default class AbstractAPI {
     throw new Error('This is method is abastrac');
   }
 
-  getToken(collectionId, tokenId) {
+  getToken(collectionId, tokenId): Promise<UpDataStructsTokenData | null> {
     throw new Error('This is method is abastract');
   }
 

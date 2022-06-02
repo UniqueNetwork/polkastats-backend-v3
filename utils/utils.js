@@ -147,6 +147,12 @@ function capitalizeAndMapObject(obj, fnValueGetter) {
   }, {});
 }
 
+function stringifyFields(obj, fieldsToStringify) {
+  return Object.fromEntries(
+    fieldsToStringify.map((k) => [k, obj[k] ? JSON.stringify(obj[k]) : obj[k]]),
+  );
+}
+
 module.exports = {
   formatNumber,
   shortHash,
@@ -163,4 +169,5 @@ module.exports = {
   normalizeSubstrateAddress,
   capitalizeFirstLetter,
   capitalizeAndMapObject,
+  stringifyFields,
 };

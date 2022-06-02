@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { UpDataStructsRpcCollection } from '@unique-nft/types';
+import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/types';
 
 export default abstract class ImplementorAPI {
   constructor(public api: ApiPromise) {}
@@ -10,7 +10,7 @@ export default abstract class ImplementorAPI {
 
   abstract impGetTokenCount(collectionId): Promise<number>;
 
-  abstract impGetToken(collectionId, tokenId): Promise<any>;
+  abstract impGetToken(collectionId, tokenId): Promise<UpDataStructsTokenData | null>;
 
   async impGetBlockHash(blockNumber) {
     return this.api.rpc.chain.getBlockHash(blockNumber);

@@ -1,9 +1,14 @@
 import { Transaction } from 'sequelize/types';
-import tokenDB from '../../../lib/tokenDB';
+import { del as delTokenDb } from '../../token/tokenDB';
 import { EventToken } from '../eventToken';
 
 export class DestroyToken extends EventToken {
   async save(transaction: Transaction) {
-    await tokenDB.del(this.tokenId, this.collectionId, this.sequelize, transaction);
+    await delTokenDb({
+      tokenId: this.tokenId,
+      collectionId: this.collectionId,
+      sequelize: this.sequelize,
+      transaction,
+    });
   }
 }

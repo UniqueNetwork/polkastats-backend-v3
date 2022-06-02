@@ -6,7 +6,7 @@ import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testn
 import { get as getCollectionDb } from '../lib/collection/collectionDB';
 import { getProtoBufRoot } from '../utils/protobuf';
 import tokenData from '../lib/tokenData';
-import tokenDB from '../lib/tokenDB';
+import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 const logger = pino({ name: 'tokenListener' });
@@ -53,7 +53,7 @@ async function getCollectionTokens(
 
 async function saveTokens(tokens: any[], sequelize: Sequelize): Promise<void> {
   for (const token of tokens) {
-    await tokenDB.save({
+    await saveTokenDb({
       token,
       sequelize,
       excludeFields: ['date_of_creation'],
@@ -67,7 +67,7 @@ async function deleteTokens(
   sequelize: Sequelize,
 ) {
   for (const tokenId of tokensIds) {
-    await tokenDB.del(tokenId, collectionId, sequelize);
+    await delTokenDb({ tokenId, collectionId, sequelize });
   }
 }
 
@@ -75,13 +75,19 @@ async function runTokensListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize: Seq
   const collections = await getCollections(sequelize);
   for (const collection of collections) {
     const tokensCount = await bridgeAPI.getTokenCount(collection.collectionId);
+
     const { tokens, destroyedTokens } = await getCollectionTokens(bridgeAPI, collection, tokensCount);
-    await deleteTokens(collection.collectionId, destroyedTokens, sequelize);
-    await saveTokens(tokens, sequelize);
+
+    // todo: debug
+    process.exit(0);
+    // await deleteTokens(collection.collectionId, destroyedTokens, sequelize);
+    // await saveTokens(tokens, sequelize);
   }
 }
 
 export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
+  console.log('api', api.rpc.unique);
+  process.exit(0);
   const { pollingTime } = config;
   const { bridgeAPI } = new BridgeAPI(api);
 

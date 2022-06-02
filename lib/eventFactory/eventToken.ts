@@ -29,9 +29,11 @@ export class EventToken {
     return {
       collectionId: this.collectionId,
       tokenId: this.tokenId,
-      owner: token.Owner,
       dateOfCreation: this.timestamp,
-      data: this.getConstData(token.ConstData, tokenSchema),
+
+      // todo: debug
+      // owner: token.Owner,
+      // data: this.getConstData(token.ConstData, tokenSchema),
     };
   }
 

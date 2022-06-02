@@ -5,7 +5,7 @@ import { QueryTypes, Sequelize, Transaction } from 'sequelize';
 
 import { IPFS_URL } from '../../config/config';
 import { SchemaVersion } from '../../constants';
-import { normalizeSubstrateAddress } from '../../utils/utils';
+import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
 import { ICollectionDB } from './collectionDB.interface';
 
 const logger = pino({ name: 'CollectionDB', level: process.env.PINO_LOG_LEVEL || 'info' });
@@ -33,26 +33,6 @@ const COLLECTION_FIELDS = [
   'date_of_creation',
   'collection_cover',
 ];
-
-export function get({ collectionId = null, selectList = COLLECTION_FIELDS, sequelize }) {
-  let qWhere = '';
-
-  const qOptions = {
-    type: QueryTypes.SELECT,
-    plain: false,
-    logging: false,
-    replacements: {},
-  };
-
-  if (collectionId) {
-    qOptions.plain = true;
-    qOptions.replacements = { collectionId };
-
-    qWhere = 'WHERE collection_id = :collectionId';
-  }
-
-  return sequelize.query(`SELECT ${selectList.join(',')} FROM collections ${qWhere}`, qOptions);
-}
 
 /**
  * Creates 'collection_cover' field value from other fields.
@@ -87,27 +67,14 @@ function getCollectionCoverReplacement(collection: ICollectionDB) {
 }
 
 function prepareQueryReplacements(collection: ICollectionDB) {
-  const toStringify = [
-    'const_chain_schema',
-    'variable_on_chain_schema',
-    'properties',
-    'permissions',
-    'token_property_permissions',
-  ];
-
-  const {
-    owner,
-    date_of_creation,
-  } = collection;
+  const { owner, date_of_creation } = collection;
 
   return {
     ...collection,
-
-    // Stringify all the values for JSONB columns
-    ...Object.fromEntries(
-      toStringify.map((k) => [k, collection[k] ? JSON.stringify(collection[k]) : collection[k]]),
-    ),
-
+    ...stringifyFields(collection, [
+      'const_chain_schema',
+      'variable_on_chain_schema',
+    ]),
     owner_normalized: normalizeSubstrateAddress(owner),
     date_of_creation: date_of_creation || null,
     ...getCollectionCoverReplacement(collection),
@@ -124,30 +91,24 @@ function createQueryOptions(collection: ICollectionDB, type: QueryTypes) {
   };
 }
 
-export async function add({
-  collection,
-  sequelize,
-  insertList = COLLECTION_FIELDS,
-}) {
-  const values = insertList.map((item) => `:${item}`).join(',');
+export function get({ collectionId = null, selectList = COLLECTION_FIELDS, sequelize }) {
+  let qWhere = '';
 
-  await sequelize.query(`INSERT INTO collections (${insertList.join(',')}) VALUES (${values})`, {
-    ...createQueryOptions(collection, QueryTypes.INSERT),
-  });
-}
-
-export function del({ collectionId, sequelize, transaction = null }) {
-  return Promise.all([
-    'DELETE FROM tokens WHERE collection_id = :collectionId',
-    'DELETE FROM collections WHERE collection_id = :collectionId',
-  ].map((query) => sequelize.query(query, {
-    type: QueryTypes.DELETE,
+  const qOptions = {
+    type: QueryTypes.SELECT,
+    plain: false,
     logging: false,
-    transaction,
-    replacements: {
-      collectionId,
-    },
-  })));
+    replacements: {},
+  };
+
+  if (collectionId) {
+    qOptions.plain = true;
+    qOptions.replacements = { collectionId };
+
+    qWhere = 'WHERE collection_id = :collectionId';
+  }
+
+  return sequelize.query(`SELECT ${selectList.join(',')} FROM collections ${qWhere}`, qOptions);
 }
 
 export async function save({
@@ -180,9 +141,16 @@ export async function save({
   );
 }
 
-// module.exports = Object.freeze({
-//   get,
-//   add,
-//   del,
-//   save,
-// });
+export function del({ collectionId, sequelize, transaction = null }) {
+  return Promise.all([
+    'DELETE FROM tokens WHERE collection_id = :collectionId',
+    'DELETE FROM collections WHERE collection_id = :collectionId',
+  ].map((query) => sequelize.query(query, {
+    type: QueryTypes.DELETE,
+    logging: false,
+    transaction,
+    replacements: {
+      collectionId,
+    },
+  })));
+}

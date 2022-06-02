@@ -12,7 +12,9 @@ export class ImplementOpalAPI extends ImplementorAPI {
   }
 
   async impGetToken(collectionId, tokenId) {
-    const tokenData = await this.api.query.nonfungible.tokenData(collectionId, tokenId);
+    const tokenData = await this.api.rpc.unique.tokenData(collectionId, tokenId);
+
+    console.log('tokenData', tokenData.toJSON());
 
     // todo: remove me
     interface IObjectWithOwner {
@@ -20,20 +22,32 @@ export class ImplementOpalAPI extends ImplementorAPI {
     }
     const data = tokenData.toJSON() as IObjectWithOwner;
 
-    const constData = await this.api.rpc.unique.constMetadata(
-      collectionId,
-      tokenId,
-    );
-    const variableMetadata = await this.api.rpc.unique.variableMetadata(
-      collectionId,
-      tokenId,
-    );
+    console.log(this.api.rpc.unique, this.api.rpc.unique.constMetadata, this.api.rpc.unique.variableMetadata);
 
-    return {
-      owner: data?.owner,
-      constData: constData.toJSON(),
-      variableData: variableMetadata.toJSON(),
-    };
+    try {
+      // const constData = await this.api.rpc.unique.constMetadata(
+      //   collectionId,
+      //   tokenId,
+      // );
+      // console.log('constData', constData.toJSON());
+
+      const variableMetadata = await this.api.rpc.unique.variableMetadata(
+        collectionId,
+        tokenId,
+      );
+
+      console.log('variableMetadata', variableMetadata.toJSON());
+    } catch (err) {
+      console.log('Error', err);
+    }
+
+    // todo: debug
+    return tokenData || null;
+    // return {
+    //   owner: data?.owner,
+    //   // constData: constData.toJSON(),
+    //   // variableData: variableMetadata.toJSON(),
+    // };
   }
 
   async impGetTokenCount(collectionId) {

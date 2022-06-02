@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize/types';
-import tokenDB from '../../../lib/tokenDB';
+import tokenDB from '../../token/tokenDB';
 import { EventToken } from '../eventToken';
 
 export class CreateToken extends EventToken {

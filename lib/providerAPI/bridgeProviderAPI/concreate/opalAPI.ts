@@ -1,5 +1,4 @@
 // import { UpDataStructsRpcCollection } from '@unique-nft/types';
-import { capitalizeAndMapObject } from '../../../../utils/utils';
 import AbstractAPI from './abstractAPI';
 
 export class OpalAPI extends AbstractAPI {
@@ -9,17 +8,8 @@ export class OpalAPI extends AbstractAPI {
   }
 
   async getToken(collectionId, tokenId) {
-    let token = await this.impl.impGetToken(collectionId, tokenId);
-    token = capitalizeAndMapObject(token, (item, key) => {
-      if (key === 'owner') {
-        const owner = item[key];
-        // Get only first values by every key
-        // eslint-disable-next-line no-param-reassign
-        item[key] = Object.entries(owner).reduce((acc, [k, v]) => { acc = { ...acc, [k]: v[0] }; return acc; }, {});
-      }
-      return item[key];
-    });
-    return token;
+    const token = await this.impl.impGetToken(collectionId, tokenId);
+    return token || null;
   }
 
   getCollectionCount() {
