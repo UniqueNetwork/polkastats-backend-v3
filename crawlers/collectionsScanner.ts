@@ -76,7 +76,7 @@ class CollectionsScanner {
 
     this.logger.info(counts, 'Full scan done!');
 
-    process.exit(0);
+    // process.exit(0);
   }
 
   /**
