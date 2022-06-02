@@ -52,7 +52,8 @@ class CollectionsScanner {
     for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
       const collection = await getCollectionById(collectionId, this.bridgeApi);
 
-      // console.log('collectionId', collectionId);
+      // console.log('collectionId', collectionId, collection);
+      // process.exit(0);
 
       try {
         if (collection) {
@@ -72,8 +73,6 @@ class CollectionsScanner {
     }
 
     this.logger.info(counts, 'Full scan done!');
-
-    // process.exit(0);
   }
 
   /**
