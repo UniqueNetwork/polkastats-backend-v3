@@ -78,16 +78,12 @@ async function runTokensListener(bridgeAPI: OpalAPI | TestnetAPI, sequelize: Seq
 
     const { tokens, destroyedTokens } = await getCollectionTokens(bridgeAPI, collection, tokensCount);
 
-    // todo: debug
-    process.exit(0);
-    // await deleteTokens(collection.collectionId, destroyedTokens, sequelize);
-    // await saveTokens(tokens, sequelize);
+    await deleteTokens(collection.collectionId, destroyedTokens, sequelize);
+    await saveTokens(tokens, sequelize);
   }
 }
 
 export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
-  console.log('api', api.rpc.unique);
-  process.exit(0);
   const { pollingTime } = config;
   const { bridgeAPI } = new BridgeAPI(api);
 

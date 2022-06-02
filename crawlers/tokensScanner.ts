@@ -2,10 +2,9 @@ import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
 import pino, { Logger } from 'pino';
-import { ICollectionDB } from '../lib/collection/collectionDB.interface';
+import { ITokenDB } from 'lib/token/tokenDB.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import { getCollectionById } from '../lib/collection/collectionData';
-import { save as saveCollectionDb, del as delCollectionDb } from '../lib/collection/collectionDB';
+import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 class TokensScanner {
@@ -17,6 +16,25 @@ class TokensScanner {
 
   constructor({ logger } : { logger: Logger }) {
     this.logger = logger;
+  }
+
+  private saveTokens(tokens: ITokenDB[]) {
+    return Promise.all(tokens.map((token) => saveTokenDb({
+      token,
+      sequelize: this.sequelize,
+      excludeFields: ['date_of_creation'],
+    })));
+  }
+
+  private deleteTokens(
+    collectionId: number,
+    tokenIds: number[],
+  ) {
+    return Promise.all(tokenIds.map((tokenId) => delTokenDb({
+      tokenId,
+      collectionId,
+      sequelize: this.sequelize,
+    })));
   }
 
   private async scanTokens() {
