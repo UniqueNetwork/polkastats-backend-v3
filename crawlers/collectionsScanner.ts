@@ -1,10 +1,10 @@
+import pino, { Logger } from 'pino';
 import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
-import pino, { Logger } from 'pino';
 import { ICollectionDB } from '../lib/collection/collectionDB.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import { getCollectionById } from '../lib/collection/collectionData';
+import { getFormattedCollectionById } from '../lib/collection/collectionData';
 import { save as saveCollectionDb, del as delCollectionDb } from '../lib/collection/collectionDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
@@ -50,7 +50,7 @@ class CollectionsScanner {
     };
 
     for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
-      const collection = await getCollectionById(collectionId, this.bridgeApi);
+      const collection = await getFormattedCollectionById(collectionId, this.bridgeApi);
 
       try {
         if (collection) {

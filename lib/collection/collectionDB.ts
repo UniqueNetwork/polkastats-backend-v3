@@ -1,14 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import pino from 'pino';
+// import pino from 'pino';
+// const logger = pino({ name: 'CollectionDB', level: process.env.PINO_LOG_LEVEL || 'info' });
 
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
-
-import { IPFS_URL } from '../../config/config';
-import { SchemaVersion } from '../../constants';
-import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
+import { stringifyFields } from '../../utils/utils';
 import { ICollectionDB } from './collectionDB.interface';
-
-const logger = pino({ name: 'CollectionDB', level: process.env.PINO_LOG_LEVEL || 'info' });
 
 const COLLECTION_FIELDS = [
   'collection_id',
@@ -34,40 +30,8 @@ const COLLECTION_FIELDS = [
   'collection_cover',
 ];
 
-/**
- * Creates 'collection_cover' field value from other fields.
- */
-function getCollectionCoverReplacement(collection: ICollectionDB) {
-  const result = { collection_cover: null };
-
-  // todo: А где в новых коллекциях брать значения?
-  const { schema_version, offchain_schema, variable_on_chain_schema } = collection;
-
-  try {
-    const urlPattern = /^http(s)?:\/\/.+/;
-
-    if (schema_version === SchemaVersion.IMAGE_URL && urlPattern.test(offchain_schema)) {
-      result.collection_cover = String(offchain_schema).replace('{id}', '1');
-    } else if (variable_on_chain_schema) {
-      const { collectionCover } = variable_on_chain_schema;
-      if (collectionCover) {
-        result.collection_cover = `${IPFS_URL}${collectionCover}`;
-      }
-    }
-  } catch (error) {
-    logger.error({
-      error,
-      schema_version,
-      offchain_schema,
-      variable_on_chain_schema,
-    }, 'Collection cover processing error');
-  }
-
-  return result;
-}
-
 function prepareQueryReplacements(collection: ICollectionDB) {
-  const { owner, date_of_creation } = collection;
+  const { date_of_creation } = collection;
 
   return {
     ...collection,
@@ -75,9 +39,7 @@ function prepareQueryReplacements(collection: ICollectionDB) {
       'const_chain_schema',
       'variable_on_chain_schema',
     ]),
-    owner_normalized: normalizeSubstrateAddress(owner),
     date_of_creation: date_of_creation || null,
-    ...getCollectionCoverReplacement(collection),
   };
 }
 
