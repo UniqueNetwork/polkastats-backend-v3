@@ -1,49 +1,50 @@
-const protobuf = require('protobufjs')
+const protobuf = require('protobufjs');
 
-function convertEnumToString (
-  { value, key, NFTMeta, locale }
-  ) {
-    let result = value;
-    try {
-      const options = NFTMeta?.fields[key]?.resolvedType?.options[value];
-      const translationObject = JSON.parse(options);
-  
-      if (translationObject && translationObject[locale]) {
-        result = translationObject[locale];
-      }
-    } catch (e) {
-      console.log(
-        "Error parsing schema when trying to convert enum to string: ",
-        e
-      );
-    }  
-    return result;
+function convertEnumToString(
+  {
+    value, key, NFTMeta, locale,
+  },
+) {
+  let result = value;
+  try {
+    const options = NFTMeta?.fields[key]?.resolvedType?.options[value];
+    const translationObject = JSON.parse(options);
+
+    if (translationObject && translationObject[locale]) {
+      result = translationObject[locale];
+    }
+  } catch (e) {
+    console.log(
+      'Error parsing schema when trying to convert enum to string: ',
+      e,
+    );
+  }
+  return result;
 }
 
-function getProtoBufRoot ( schema ) {
+function getProtoBufRoot(schema) {
   let result = null;
   let source = schema;
   try {
-    if ( schema ) {      
+    if (schema) {
       if (typeof schema === 'string') {
-        source = JSON.parse(schema)
-      }      
-      if ( typeof source === 'object' ) {
-        if ( 'onChainMetaData' in source?.nested) {
-          result = protobuf.Root.fromJSON( source );          
+        source = JSON.parse(schema);
+      }
+      if (typeof source === 'object') {
+        if ('onChainMetaData' in source?.nested) {
+          result = protobuf.Root.fromJSON(source);
         }
       }
     }
-    return result;  
-  } catch { 
+    return result;
+  } catch {
     return null;
-  }  
+  }
 }
 
-
-function deserializeNFT ({
-  buffer, locale, root, metaKey = 'onChainMetaData.NFTMeta', schema
-}) {  
+function deserializeNFT({
+  buffer, locale, root, metaKey = 'onChainMetaData.NFTMeta', schema,
+}) {
   // Obtain the message type
   const NFTMeta = root.lookupType(metaKey);
   // Decode a Uint8Array (browser) or Buffer (node) to a message
@@ -60,29 +61,29 @@ function deserializeNFT ({
   });
 
   const mappingObject = Object.fromEntries(
-    Object.keys(originalObject).map((key) => [key, parseObject[key]])
+    Object.keys(originalObject).map((key) => [key, parseObject[key]]),
   );
   for (const key in mappingObject) {
     if (NFTMeta.fields[key].resolvedType === null) {
       continue;
     }
-    if (NFTMeta.fields[key].resolvedType.constructor.name == "Enum") {
+    if (NFTMeta.fields[key].resolvedType.constructor.name == 'Enum') {
       if (Array.isArray(mappingObject[key])) {
         const items = mappingObject[key];
-        items.forEach((item, index) => {          
+        items.forEach((item, index) => {
           mappingObject[key][index] = convertEnumToString({
             value: mappingObject[key][index],
             key,
             NFTMeta,
-            locale
+            locale,
           });
         });
-      } else {        
+      } else {
         mappingObject[key] = convertEnumToString({
           value: mappingObject[key],
           key,
           NFTMeta,
-          locale
+          locale,
         });
       }
     }
@@ -92,5 +93,5 @@ function deserializeNFT ({
 
 module.exports = Object.freeze({
   getProtoBufRoot,
-  deserializeNFT  
+  deserializeNFT,
 });

@@ -49,6 +49,7 @@ function processProperties(collection: UpDataStructsRpcCollection)
   : ICollectionDBFieldsSchema & { properties: Object } {
   const { properties: rawProperties } = collection;
 
+  // For now we should have the exact set of '_old_*' properties.
   const properties : {
     _old_offchainSchema?: string,
     _old_constOnChainSchema?: Object,
@@ -85,6 +86,7 @@ function processPermissions(collection: UpDataStructsRpcCollection): { mint_mode
   const permissions = rawPermissions.toJSON();
 
   return {
+    // For now we take only 'mintMode' from 'permissions'
     mint_mode: !!permissions.mintMode,
     permissions,
   };
@@ -126,13 +128,8 @@ function getCollectionDbData(collectionId: number, collection: UpDataStructsRpcC
   };
 }
 
-// eslint-disable-next-line import/prefer-default-export
 export async function getCollectionById(collectionId, bridgeAPI: OpalAPI): Promise<ICollectionDB | null> {
   const rawCollection = await bridgeAPI.getCollection(collectionId);
 
-  if (rawCollection) {
-    return getCollectionDbData(collectionId, rawCollection);
-  }
-
-  return null;
+  return rawCollection ? getCollectionDbData(collectionId, rawCollection) : null;
 }

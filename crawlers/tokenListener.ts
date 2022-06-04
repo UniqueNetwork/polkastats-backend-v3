@@ -5,7 +5,7 @@ import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI'
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { get as getCollectionDb } from '../lib/collection/collectionDB';
 import { getProtoBufRoot } from '../utils/protobuf';
-import tokenData from '../lib/tokenData';
+import tokenData from '../lib/token/tokenData';
 import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDB';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
