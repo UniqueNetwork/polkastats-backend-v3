@@ -1,12 +1,13 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { Root } from 'protobufjs';
-import { bufferToJSON } from '../../utils/utils';
+import { getFormattedToken } from 'lib/token/tokenData';
 import protobuf from '../../utils/protobuf';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { get as getCollectionDb } from '../collection/collectionDB';
+import { save as saveCollectionDb, getCollectionSchemaInfo } from '../collection/collectionDB';
 import eventsDB from '../eventsDB';
 import { EventTypes } from './type';
+import { getFormattedCollectionById } from '../collection/collectionData';
+import { ICollectionSchemaInfo } from '../../crawlers/crawlers.interfaces';
 
 export class EventToken {
   constructor(
@@ -24,17 +25,9 @@ export class EventToken {
   public async save(transaction: Transaction): Promise<void> {}
 
   public async getToken(): Promise<any> {
-    const token = await this.bridgeAPI.getToken(this.collectionId, this.tokenId);
     const tokenSchema = await this.getTokenSchema();
-    return {
-      collectionId: this.collectionId,
-      tokenId: this.tokenId,
-      dateOfCreation: this.timestamp,
-
-      // todo: debug
-      // owner: token.Owner,
-      // data: this.getConstData(token.ConstData, tokenSchema),
-    };
+    const token = await getFormattedToken(this.tokenId, tokenSchema, this.bridgeAPI);
+    return token;
   }
 
   private parseConstData(constData, schema) {
@@ -72,22 +65,33 @@ export class EventToken {
     return JSON.stringify(this.getDeserializeConstData(statement));
   }
 
-  private async getTokenSchema(): Promise<Root> {
-    const collectionFromDB = await getCollectionDb({
+  private async getTokenSchema(): Promise<ICollectionSchemaInfo | null> {
+    const collectionSchema = await getCollectionSchemaInfo({
       collectionId: this.collectionId,
-      selectList: ['collection_id', 'const_chain_schema'],
       sequelize: this.sequelize,
     });
 
-    if (collectionFromDB) {
-      return protobuf.getProtoBufRoot(collectionFromDB.const_chain_schema);
+    if (collectionSchema.length) {
+      return collectionSchema[0];
     }
 
-    // todo: Debug
-    // const collection = await this.bridgeAPI.getCollection(this.collectionId);
+    // Collection is not in db, try to import
+    // todo: Do something more centralized
+    const collection = await getFormattedCollectionById(this.collectionId, this.bridgeAPI);
+    if (collection) {
+      await saveCollectionDb({
+        collection,
+        sequelize: this.sequelize,
+        excludeFields: ['date_of_creation'],
+      });
+
+      return {
+        collectionId: this.collectionId,
+        schema: protobuf.getProtoBufRoot(collection.const_chain_schema),
+      };
+    }
 
     return null;
-    // return protobuf.getProtoBufRoot(bufferToJSON(collection.ConstOnChainSchema));
   }
 
   protected async canSave(): Promise<boolean> {

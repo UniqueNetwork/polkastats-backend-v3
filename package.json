@@ -23,7 +23,9 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "migration:create": "node_modules/sequelize-cli/lib/sequelize migration:generate --name",
     "migration": "node_modules/sequelize-cli/lib/sequelize db:migrate",
-    "migration:undo": "node_modules/sequelize-cli/lib/sequelize db:migrate:undo"
+    "migration:undo": "node_modules/sequelize-cli/lib/sequelize db:migrate:undo",
+
+    "dev": "node ./tmp/script.js"
   },
   "repository": {
     "type": "git",

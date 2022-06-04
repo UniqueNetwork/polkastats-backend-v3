@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-// import pino from 'pino';
-// const logger = pino({ name: 'CollectionDB', level: process.env.PINO_LOG_LEVEL || 'info' });
-
+import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
+import { getProtoBufRoot } from '../../utils/protobuf';
 import { stringifyFields } from '../../utils/utils';
 import { ICollectionDB } from './collectionDB.interface';
 
@@ -115,4 +114,18 @@ export function del({ collectionId, sequelize, transaction = null }) {
       collectionId,
     },
   })));
+}
+
+export async function getCollectionSchemaInfo({ collectionId = null, sequelize })
+  : Promise<ICollectionSchemaInfo[]> {
+  const collections = await get({
+    collectionId,
+    selectList: ['collection_id', 'const_chain_schema'],
+    sequelize,
+  });
+
+  return collections.map((collection) => ({
+    collectionId: Number(collection.collection_id),
+    schema: getProtoBufRoot(collection.const_chain_schema),
+  }));
 }

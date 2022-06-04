@@ -18,7 +18,7 @@ export interface ICrawlerModule {
   config?: ICrawlerModuleConfig;
 }
 
-export interface ITokenCollectionInfoStruct {
+export interface ICollectionSchemaInfo {
   collectionId: number,
   schema: any
 }

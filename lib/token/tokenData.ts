@@ -1,5 +1,5 @@
 /* eslint-disable no-underscore-dangle */
-import { ITokenCollectionInfoStruct } from 'crawlers/crawlers.interfaces';
+import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { UpDataStructsTokenData } from '@unique-nft/types';
 import { AnyJson } from '@polkadot/types/types';
 import protobuf from '../../utils/protobuf';
@@ -101,7 +101,7 @@ function processProperties(schema: any, rawToken: UpDataStructsTokenData)
   };
 }
 
-function getTokenDbData(tokenId: number, collectionInfo: ITokenCollectionInfoStruct, rawToken: UpDataStructsTokenData)
+function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo, rawToken: UpDataStructsTokenData)
   : ITokenDB {
   // console.log('rawToken toJSON()', collectionInfo, tokenId, rawToken.toJSON());
 
@@ -115,14 +115,14 @@ function getTokenDbData(tokenId: number, collectionInfo: ITokenCollectionInfoStr
   };
 }
 
-export async function getTokenById(tokenId: number, collectionInfo: ITokenCollectionInfoStruct, bridgeAPI: OpalAPI)
+export async function getFormattedToken(tokenId: number, collectionInfo: ICollectionSchemaInfo, bridgeAPI: OpalAPI)
   : Promise<ITokenDB | null> {
   const { collectionId } = collectionInfo;
   const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
 
-  if (rawToken && rawToken.properties.length) {
-    console.log('with props', { collectionId, tokenId, token: rawToken.toJSON() });
-  }
+  // if (rawToken && rawToken.properties.length) {
+  //   console.log('with props', { collectionId, tokenId, token: rawToken.toJSON());
+  // }
   return null;
-  // return rawToken ? getTokenDbData(tokenId, collectionInfo, rawToken) : null;
+  // return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
 }
