@@ -43,14 +43,18 @@ function getProtoBufRoot(schema) {
 }
 
 function deserializeNFT({
-  buffer, locale, root, metaKey = 'onChainMetaData.NFTMeta', schema,
+  buffer,
+  locale,
+  root,
+  metaKey = 'onChainMetaData.NFTMeta',
 }) {
   // Obtain the message type
   const NFTMeta = root.lookupType(metaKey);
+
   // Decode a Uint8Array (browser) or Buffer (node) to a message
   const message = NFTMeta.decode(buffer);
   const originalObject = NFTMeta.toObject(message);
-  const parseObject = NFTMeta.toObject(message, {
+  const parsedObject = NFTMeta.toObject(message, {
     enums: String, // enums as string names
     longs: String, // longs as strings (requires long.js)
     bytes: Array, // bytes as base64 encoded strings
@@ -61,8 +65,9 @@ function deserializeNFT({
   });
 
   const mappingObject = Object.fromEntries(
-    Object.keys(originalObject).map((key) => [key, parseObject[key]]),
+    Object.keys(originalObject).map((key) => [key, parsedObject[key]]),
   );
+
   for (const key in mappingObject) {
     if (NFTMeta.fields[key].resolvedType === null) {
       continue;
@@ -88,6 +93,7 @@ function deserializeNFT({
       }
     }
   }
+
   return mappingObject;
 }
 

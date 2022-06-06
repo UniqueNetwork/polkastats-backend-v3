@@ -1,12 +1,12 @@
 import pino, { Logger } from 'pino';
-import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
-import { getCollectionSchemaInfo } from '../lib/collection/collectionDB';
+import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import { getFormattedToken } from '../lib/token/tokenData';
+import { getCollectionsSchemaInfo } from '../lib/collection/collectionDB';
 import { ITokenDB } from '../lib/token/tokenDB.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDB';
-// import { getTokenById } from '../lib/token/tokenData';
 import { ICrawlerModuleConstructorArgs, ICollectionSchemaInfo } from './crawlers.interfaces';
 
 class TokensScanner {
@@ -22,29 +22,27 @@ class TokensScanner {
 
   private async getCollectionTokens(collectionInfo: ICollectionSchemaInfo) {
     const { collectionId } = collectionInfo;
-    const tokensCount = await this.bridgeApi.getTokenCount(collectionId);
-
-    console.log('tokensCount', tokensCount);
+    const tokensCount = 1;// await this.bridgeApi.getTokenCount(collectionId);
 
     const tokens = [];
     const destroyedTokens: number[] = [];
 
-    // for (let tokenId = 1; tokenId <= tokensCount; tokenId++) {
-    //   try {
-    //     const token = await getTokenById(tokenId, collectionInfo, this.bridgeApi);
-    //     tokens.push(token);
-    //   } catch (error) {
-    //     console.log('getCollectionTokens error', error);
-    //     destroyedTokens.push(tokenId);
-    //     this.logger.info(
-    //       {
-    //         tokenId,
-    //         collectionId,
-    //       },
-    //       'Can\'t get token in collection. Maybe it was burned.',
-    //     );
-    //   }
-    // }
+    for (let tokenId = 1; tokenId <= tokensCount; tokenId++) {
+      try {
+        const token = await getFormattedToken(tokenId, collectionInfo, this.bridgeApi);
+        // tokens.push(token);
+      } catch (error) {
+        console.log('getCollectionTokens error', error);
+        // destroyedTokens.push(tokenId);
+        this.logger.info(
+          {
+            tokenId,
+            collectionId,
+          },
+          'Can\'t get token in collection. Maybe it was burned.',
+        );
+      }
+    }
 
     return {
       tokens,
@@ -81,11 +79,10 @@ class TokensScanner {
       failed: 0,
     };
 
-    let allCollectionsInfo = await getCollectionSchemaInfo({ sequelize: this.sequelize });
+    let allCollectionsInfo = await getCollectionsSchemaInfo({ sequelize: this.sequelize });
 
-    allCollectionsInfo = allCollectionsInfo.filter(({ collectionId }) => [57].includes(collectionId));
-
-    console.log(allCollectionsInfo[0], typeof allCollectionsInfo[0].schema);
+    // todo: debug
+    allCollectionsInfo = allCollectionsInfo.filter(({ collectionId }) => [57, 61].includes(collectionId)); // 57 - err, 61, 77
 
     for (let i = 0; i < allCollectionsInfo.length; i++) {
       const collectionInfo = allCollectionsInfo[i];

@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { UpDataStructsTokenData } from '@unique-nft/types';
-import { AnyJson } from '@polkadot/types/types';
 import protobuf from '../../utils/protobuf';
 import { ITokenDB } from './tokenDB.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
@@ -26,72 +25,59 @@ function getDeserializeConstData(statement) {
     try {
       result = { ...protobuf.deserializeNFT(statement) };
     } catch (error) {
-      // console.error(error);
+      // eslint-disable-next-line no-console
+      console.error(
+        'getDeserializeConstData(): Can not process constData with existing schema',
+        statement,
+      );
       result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
     }
   } else {
     result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
   }
+
   return result;
 }
 
-// function toObject(token) {
-//   let result = {};
-//   if (!('Owner' in token)) {
-//     result = Object.assign(result, token.toJSON());
-//   }
-//   return result;
-// }
-
 function getConstData(constData, schema) {
   const statement = parseConstData(constData, schema);
-
   return JSON.stringify(getDeserializeConstData(statement));
 }
 
-// function getToken(aToken) {
-//   let result = null;
-//   if (aToken?.Owner) {
-//     result = getData(aToken);
-//   }
-//   return result;
-// }
-
-// async function get({
-//   collection, tokenId, bridgeAPI,
-// }) {
-//   const token = await bridgeAPI.getToken(collection.collectionId, tokenId);
-//   return getToken(
-//     Object.assign(token, {
-//       collectionId: collection.collectionId,
-//       tokenId,
-//       schema: collection.schema,
-//     }),
-//   );
-// }
-
 function processProperties(schema: any, rawToken: UpDataStructsTokenData)
   : { data: Object, properties: Object } {
-  const properties: AnyJson & { _old_constData?: any } = rawToken.properties.toJSON();
+  const rawProperties = rawToken.properties;
 
-  console.log('properties', properties);
+  const properties : {
+    _old_constData?: Object | string,
+  } = {};
+
+  rawProperties.forEach(({ key, value }) => {
+    const strKey = key.toUtf8();
+    let processedValue = null;
+
+    if (['_old_constData'].includes(strKey)) {
+      try { processedValue = value.toHex(); } catch (err) { /* */ }
+    }
+
+    properties[strKey] = processedValue || value;
+  });
 
   return {
-    data: getConstData(properties?._old_constData, schema),
+    data: getConstData(properties._old_constData, schema),
     properties,
   };
 }
 
 function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo, rawToken: UpDataStructsTokenData)
   : ITokenDB {
-  // console.log('rawToken toJSON()', collectionInfo, tokenId, rawToken.toJSON());
-
   const { collectionId, schema } = collectionInfo;
+
   return {
     token_id: tokenId,
     collection_id: collectionId,
-    owner: 'string',
-    owner_normalized: 'string',
+    owner: 'string', // todo:
+    owner_normalized: 'string', // todo:
     ...processProperties(schema, rawToken),
   };
 }
@@ -101,9 +87,9 @@ export async function getFormattedToken(tokenId: number, collectionInfo: ICollec
   const { collectionId } = collectionInfo;
   const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
 
-  if (rawToken && rawToken.properties.length) {
-    console.log('with props', { collectionId, tokenId, token: rawToken.toJSON() });
-  }
-  // return null;
+  // if (rawToken && rawToken.properties.length) {
+  //   console.log('getFormattedToken()', rawToken.toJSON());
+  // }
+
   return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
 }

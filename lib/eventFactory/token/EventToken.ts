@@ -4,7 +4,7 @@ import { getFormattedToken } from '../../token/tokenData';
 import protobuf from '../../../utils/protobuf';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { save as saveCollectionDb, getCollectionSchemaInfo } from '../../collection/collectionDB';
+import { save as saveCollectionDb, getCollectionsSchemaInfo } from '../../collection/collectionDB';
 import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
 import { getFormattedCollectionById } from '../../collection/collectionData';
@@ -31,7 +31,7 @@ export default abstract class EventToken {
   }
 
   private async getTokenSchema(): Promise<ICollectionSchemaInfo | null> {
-    const collectionSchema = await getCollectionSchemaInfo({
+    const collectionSchema = await getCollectionsSchemaInfo({
       collectionId: this.collectionId,
       sequelize: this.sequelize,
     });

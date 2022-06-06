@@ -116,7 +116,10 @@ export function del({ collectionId, sequelize, transaction = null }) {
   })));
 }
 
-export async function getCollectionSchemaInfo({ collectionId = null, sequelize })
+/**
+ * Returns array of parsed collections schema info.
+ */
+export async function getCollectionsSchemaInfo({ collectionId = null, sequelize })
   : Promise<ICollectionSchemaInfo[]> {
   const collections = await get({
     collectionId,
