@@ -1,11 +1,11 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { getFormattedToken } from 'lib/token/tokenData';
-import { ITokenDB } from 'lib/token/tokenDB.interface';
+import { ITokenDB } from '../../token/tokenDB.interface';
+import { getFormattedToken } from '../../token/tokenData';
 import protobuf from '../../../utils/protobuf';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { save as saveCollectionDb, getCollectionSchemaInfo } from '../../collection/collectionDB';
-import eventsDB from '../../eventsDB';
+import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
 import { getFormattedCollectionById } from '../../collection/collectionData';
 import { ICollectionSchemaInfo } from '../../../crawlers/crawlers.interfaces';

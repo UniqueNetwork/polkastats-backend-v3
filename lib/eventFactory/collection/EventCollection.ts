@@ -3,7 +3,7 @@ import { ICollectionDB } from 'lib/collection/collectionDB.interface';
 import { getFormattedCollectionById } from '../../collection/collectionData';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import eventsDB from '../../eventsDB';
+import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
 
 export default abstract class EventCollection {
