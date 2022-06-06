@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { UpDataStructsTokenData } from '@unique-nft/types';
+import { normalizeSubstrateAddress } from '../../utils/utils';
 import protobuf from '../../utils/protobuf';
 import { ITokenDB } from './tokenDB.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
@@ -25,12 +26,11 @@ function getDeserializeConstData(statement) {
     try {
       result = { ...protobuf.deserializeNFT(statement) };
     } catch (error) {
-      // todo: Useless log now. Should log error by logger with collectionId and tokenId
-      // eslint-disable-next-line no-console
+      // todo: Useless log now. Should log error by logger with collectionId and tokenId.
       console.error(
-        'getDeserializeConstData(): Can not process constData with existing schema',
-        statement,
-        error,
+        'getDeserializeConstData(): Could not process constData with existing schema.',
+        // statement,
+        `Error message: '${error?.message}'`,
       );
       result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
     }
@@ -42,8 +42,12 @@ function getDeserializeConstData(statement) {
 }
 
 function processConstData(constData, schema) {
+  if (!constData) {
+    return {};
+  }
+
   const statement = parseConstDataValue(constData, schema);
-  return JSON.stringify(getDeserializeConstData(statement));
+  return getDeserializeConstData(statement);
 }
 
 function processProperties(schema: any, rawToken: UpDataStructsTokenData)
@@ -77,13 +81,14 @@ function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo,
   const { collectionId, schema } = collectionInfo;
 
   const rawOwnerJson = rawToken.owner.toJSON() as { substrate?: string, ethereum?: string };
+
   const owner = rawOwnerJson?.substrate || rawOwnerJson?.ethereum;
 
   return {
     token_id: tokenId,
     collection_id: collectionId,
     owner,
-    owner_normalized: 'string', // todo:
+    owner_normalized: normalizeSubstrateAddress(owner),
     ...processProperties(schema, rawToken),
   };
 }

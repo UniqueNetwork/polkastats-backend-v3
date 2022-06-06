@@ -22,7 +22,9 @@ class TokensScanner {
 
   private async getCollectionTokens(collectionInfo: ICollectionSchemaInfo) {
     const { collectionId } = collectionInfo;
-    const tokensCount = 1;// await this.bridgeApi.getTokenCount(collectionId);
+    // todo: debug
+    // const tokensCount = Math.min((await this.bridgeApi.getTokenCount(collectionId)), 2);
+    const tokensCount = await this.bridgeApi.getTokenCount(collectionId);
 
     const tokens = [];
     const destroyedTokens: number[] = [];
@@ -30,11 +32,9 @@ class TokensScanner {
     for (let tokenId = 1; tokenId <= tokensCount; tokenId++) {
       try {
         const token = await getFormattedToken(tokenId, collectionInfo, this.bridgeApi);
-        console.log('formatted token', token);
-        // tokens.push(token);
+        tokens.push(token);
       } catch (error) {
-        console.log('getCollectionTokens error', error);
-        // destroyedTokens.push(tokenId);
+        destroyedTokens.push(tokenId);
         this.logger.info(
           {
             tokenId,
@@ -74,17 +74,13 @@ class TokensScanner {
     this.logger.info('Run full scan');
 
     const counts = {
-      total: 0,
       updated: 0,
       deleted: 0,
-      failed: 0,
+      failedCollectionsCount: 0,
+      failedColections: [],
     };
 
-    let allCollectionsInfo = await getCollectionsSchemaInfo({ sequelize: this.sequelize });
-
-    // todo: debug
-    allCollectionsInfo = allCollectionsInfo
-      .filter(({ collectionId }) => [57, 61].includes(collectionId)); // 57 - err, 61, 77
+    const allCollectionsInfo = await getCollectionsSchemaInfo({ sequelize: this.sequelize });
 
     for (let i = 0; i < allCollectionsInfo.length; i++) {
       const collectionInfo = allCollectionsInfo[i];
@@ -92,15 +88,23 @@ class TokensScanner {
 
       const { collectionId } = collectionInfo;
 
-      console.log(collectionId);
-      // console.log({ collectionId, tokens, destroyedTokens });
+      this.logger.trace({
+        collectionId,
+        tokens: tokens.length,
+        destroyedTokens: destroyedTokens.length,
+      }, 'Processing collection tokens');
+
       try {
-        // await Promise.all([
-        //   this.saveTokens(tokens),
-        //   this.deleteTokens(collectionId, destroyedTokens),
-        // ]);
+        await Promise.all([
+          this.saveTokens(tokens),
+          this.deleteTokens(collectionId, destroyedTokens),
+        ]);
+
+        counts.updated += tokens.length;
+        counts.deleted += destroyedTokens.length;
       } catch (error) {
-        counts.failed++;
+        counts.failedColections.push(collectionId);
+        counts.failedCollectionsCount++;
         this.logger.error({
           collectionId,
           message: error?.message,
