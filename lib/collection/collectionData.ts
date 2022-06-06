@@ -75,16 +75,12 @@ function processProperties(collection: UpDataStructsRpcCollection)
   rawProperties.forEach(({ key, value }) => {
     const strKey = key.toUtf8();
     const strValue = value.toUtf8();
-    let jsonValue = null;
+    let processedValue = null;
 
     if (strValue && ['_old_constOnChainSchema', '_old_variableOnChainSchema'].includes(strKey)) {
-      try {
-        jsonValue = JSON.parse(strValue);
-      } catch (err) {
-        //
-      }
+      try { processedValue = JSON.parse(strValue); } catch (err) { /* */ }
     }
-    properties[strKey] = jsonValue || strValue;
+    properties[strKey] = processedValue || strValue;
   });
 
   return {

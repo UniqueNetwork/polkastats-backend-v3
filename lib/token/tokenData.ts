@@ -5,7 +5,7 @@ import protobuf from '../../utils/protobuf';
 import { ITokenDB } from './tokenDB.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 
-function parseConstData(constData, schema) {
+function parseConstDataValue(constData, schema) {
   const buffer = Buffer.from(constData.replace('0x', ''), 'hex');
   if (buffer.toString().length !== 0 && constData.replace('0x', '') && schema !== null) {
     return {
@@ -25,10 +25,12 @@ function getDeserializeConstData(statement) {
     try {
       result = { ...protobuf.deserializeNFT(statement) };
     } catch (error) {
+      // todo: Useless log now. Should log error by logger with collectionId and tokenId
       // eslint-disable-next-line no-console
       console.error(
         'getDeserializeConstData(): Can not process constData with existing schema',
         statement,
+        error,
       );
       result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
     }
@@ -39,8 +41,8 @@ function getDeserializeConstData(statement) {
   return result;
 }
 
-function getConstData(constData, schema) {
-  const statement = parseConstData(constData, schema);
+function processConstData(constData, schema) {
+  const statement = parseConstDataValue(constData, schema);
   return JSON.stringify(getDeserializeConstData(statement));
 }
 
@@ -54,17 +56,18 @@ function processProperties(schema: any, rawToken: UpDataStructsTokenData)
 
   rawProperties.forEach(({ key, value }) => {
     const strKey = key.toUtf8();
+    const strValue = value.toUtf8();
     let processedValue = null;
 
     if (['_old_constData'].includes(strKey)) {
       try { processedValue = value.toHex(); } catch (err) { /* */ }
     }
 
-    properties[strKey] = processedValue || value;
+    properties[strKey] = processedValue || strValue;
   });
 
   return {
-    data: getConstData(properties._old_constData, schema),
+    data: processConstData(properties._old_constData, schema),
     properties,
   };
 }
