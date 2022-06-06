@@ -17,7 +17,7 @@ module.exports = {
         'total_extrinsics',
         {
           type: Sequelize.DataTypes.INTEGER,
-          allowNull: false,
+          defaultValue: 0,
         },
         {
           transaction,
