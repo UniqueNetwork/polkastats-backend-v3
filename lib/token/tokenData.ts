@@ -76,10 +76,13 @@ function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo,
   : ITokenDB {
   const { collectionId, schema } = collectionInfo;
 
+  const rawOwnerJson = rawToken.owner.toJSON() as { substrate?: string, ethereum?: string };
+  const owner = rawOwnerJson?.substrate || rawOwnerJson?.ethereum;
+
   return {
     token_id: tokenId,
     collection_id: collectionId,
-    owner: 'string', // todo:
+    owner,
     owner_normalized: 'string', // todo:
     ...processProperties(schema, rawToken),
   };

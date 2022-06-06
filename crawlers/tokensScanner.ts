@@ -30,6 +30,7 @@ class TokensScanner {
     for (let tokenId = 1; tokenId <= tokensCount; tokenId++) {
       try {
         const token = await getFormattedToken(tokenId, collectionInfo, this.bridgeApi);
+        console.log('formatted token', token);
         // tokens.push(token);
       } catch (error) {
         console.log('getCollectionTokens error', error);
@@ -82,7 +83,8 @@ class TokensScanner {
     let allCollectionsInfo = await getCollectionsSchemaInfo({ sequelize: this.sequelize });
 
     // todo: debug
-    allCollectionsInfo = allCollectionsInfo.filter(({ collectionId }) => [57, 61].includes(collectionId)); // 57 - err, 61, 77
+    allCollectionsInfo = allCollectionsInfo
+      .filter(({ collectionId }) => [57, 61].includes(collectionId)); // 57 - err, 61, 77
 
     for (let i = 0; i < allCollectionsInfo.length; i++) {
       const collectionInfo = allCollectionsInfo[i];
