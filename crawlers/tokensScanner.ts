@@ -113,8 +113,6 @@ class TokensScanner {
     }
 
     this.logger.info(counts, 'Full scan done!');
-
-    process.exit(0);
   }
 
   /**

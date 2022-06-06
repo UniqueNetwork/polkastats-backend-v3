@@ -20,7 +20,7 @@ class CollectionsScanner {
   }
 
   private saveCollection(collection: ICollectionDB) : Promise<any> {
-    this.logger.debug(`Save collection with id: ${collection.collection_id}`);
+    this.logger.trace({ collectionId: collection.collection_id }, 'Save collection');
 
     return saveCollectionDb({
       collection,
@@ -30,7 +30,7 @@ class CollectionsScanner {
   }
 
   private deleteCollection(collectionId: number) : Promise<any> {
-    this.logger.debug(`Delete collection with id: ${collectionId}`);
+    this.logger.trace({ collectionId }, 'Delete collection');
 
     return delCollectionDb({
       collectionId,
