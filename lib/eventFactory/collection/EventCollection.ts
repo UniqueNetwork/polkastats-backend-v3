@@ -1,12 +1,12 @@
 import { Sequelize, Transaction } from 'sequelize/types';
 import { ICollectionDB } from 'lib/collection/collectionDB.interface';
-import { getFormattedCollectionById } from '../collection/collectionData';
-import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import eventsDB from '../eventsDB';
-import { EventTypes } from './type';
+import { getFormattedCollectionById } from '../../collection/collectionData';
+import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import eventsDB from '../../eventsDB';
+import { EventTypes } from '../type';
 
-export abstract class EventCollection {
+export default abstract class EventCollection {
   constructor(
     protected bridgeAPI: OpalAPI | TestnetAPI,
     protected sequelize: Sequelize,

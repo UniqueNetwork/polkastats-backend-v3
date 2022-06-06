@@ -1,7 +1,7 @@
 import { Sequelize } from 'sequelize/types';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { EventFactory } from '../lib/eventFactory';
+import EventFactory from '../lib/eventFactory/EventFactory';
 
 export class EventFacade {
   bridgeAPI: OpalAPI | TestnetAPI;

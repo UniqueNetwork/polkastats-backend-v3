@@ -1,16 +1,17 @@
 import { Transaction } from 'sequelize/types';
 import { save as saveTokenDb } from '../../token/tokenDB';
-import EventToken from '../eventToken';
+import EventToken from './EventToken';
 
-export class CreateToken extends EventToken {
+export default class TransferToken extends EventToken {
   async save(transaction: Transaction) {
-    const canCreateNewToken = await this.canSave();
+    const canSaveToken = await this.canSave();
 
-    if (canCreateNewToken) {
+    if (canSaveToken) {
       const token = await this.getToken();
       await saveTokenDb({
         token,
         transaction,
+        excludeFields: ['date_of_creation'],
         sequelize: this.sequelize,
       });
     }

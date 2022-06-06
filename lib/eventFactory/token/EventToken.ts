@@ -1,14 +1,14 @@
 import { Sequelize, Transaction } from 'sequelize/types';
 import { getFormattedToken } from 'lib/token/tokenData';
 import { ITokenDB } from 'lib/token/tokenDB.interface';
-import protobuf from '../../utils/protobuf';
-import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { save as saveCollectionDb, getCollectionSchemaInfo } from '../collection/collectionDB';
-import eventsDB from '../eventsDB';
-import { EventTypes } from './type';
-import { getFormattedCollectionById } from '../collection/collectionData';
-import { ICollectionSchemaInfo } from '../../crawlers/crawlers.interfaces';
+import protobuf from '../../../utils/protobuf';
+import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import { save as saveCollectionDb, getCollectionSchemaInfo } from '../../collection/collectionDB';
+import eventsDB from '../../eventsDB';
+import { EventTypes } from '../type';
+import { getFormattedCollectionById } from '../../collection/collectionData';
+import { ICollectionSchemaInfo } from '../../../crawlers/crawlers.interfaces';
 
 export default abstract class EventToken {
   constructor(
@@ -23,8 +23,6 @@ export default abstract class EventToken {
       throw new Error(`Can't create/modify token without collectionId(${this.collectionId}) or tokenId(${this.tokenId})`);
     }
   }
-
-  public abstract save(transaction: Transaction): Promise<void>;
 
   public async getToken(): Promise<ITokenDB> {
     const tokenSchema = await this.getTokenSchema();
@@ -43,7 +41,7 @@ export default abstract class EventToken {
     }
 
     // Collection is not in db, try to import
-    // todo: Do something more centralized
+    // todo: Do something more centralized. Maybe someway trigger call EventCollection?
     const collection = await getFormattedCollectionById(this.collectionId, this.bridgeAPI);
     if (collection) {
       await saveCollectionDb({
@@ -77,4 +75,6 @@ export default abstract class EventToken {
 
     return !destroyTokenEvent && !destroyCollectionEvent;
   }
+
+  public abstract save(transaction: Transaction): Promise<void>;
 }

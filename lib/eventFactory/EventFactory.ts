@@ -1,17 +1,21 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { CreateCollection } from './eventFactory/collection/createCollection';
-import { DestroyCollection } from './eventFactory/collection/destroyCollection';
-import { UpdateCollection } from './eventFactory/collection/updateCollection';
-import { EventCollection } from './eventFactory/eventCollection';
-import EventToken from './eventFactory/eventToken';
-import { CreateToken } from './eventFactory/token/createToken';
-import { DestroyToken } from './eventFactory/token/destroyToken';
-import { TransferToken } from './eventFactory/token/transferToken';
-import { EventTypes } from './eventFactory/type';
-import { OpalAPI } from './providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from './providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import {
+  EventCollection,
+  CreateCollection,
+  DestroyCollection,
+  UpdateCollection,
+} from './collection';
+import {
+  EventToken,
+  CreateToken,
+  DestroyToken,
+  TransferToken,
+} from './token';
+import { EventTypes } from './type';
+import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 
-export class EventFactory {
+export default class EventFactory {
   event: EventToken | EventCollection;
 
   constructor(

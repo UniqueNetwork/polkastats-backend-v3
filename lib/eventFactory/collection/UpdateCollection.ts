@@ -1,8 +1,8 @@
 import { Transaction } from 'sequelize/types';
-import { EventCollection } from '../eventCollection';
+import EventCollection from './EventCollection';
 import { save as saveCollectionDb } from '../../collection/collectionDB';
 
-export class UpdateCollection extends EventCollection {
+export default class UpdateCollection extends EventCollection {
   public async save(transaction: Transaction): Promise<void> {
     const isDestroyed = await this.isDestroyed();
 
