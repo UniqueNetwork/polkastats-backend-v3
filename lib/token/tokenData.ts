@@ -6,40 +6,31 @@ import protobuf from '../../utils/protobuf';
 import { ITokenDB } from './tokenDB.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 
-function getDeserializeConstData(aStatement) {
-  let result: { hex?: string } = {};
-  if ('buffer' in aStatement) {
-    try {
-      result = { ...protobuf.deserializeNFT(aStatement) };
-    } catch (error) {
-      console.error(error);
-      result.hex = aStatement.constData?.toString().replace('0x', '') || aStatement.constData;
-    }
-  } else {
-    result.hex = aStatement.constData?.toString().replace('0x', '') || aStatement.constData;
+function parseConstData(constData, schema) {
+  const buffer = Buffer.from(constData.replace('0x', ''), 'hex');
+  if (buffer.toString().length !== 0 && constData.replace('0x', '') && schema !== null) {
+    return {
+      constData,
+      buffer,
+      locale: 'en',
+      root: schema,
+    };
   }
-  return result;
+
+  return { constData };
 }
 
-function preConstData(aConstData, aSchema) {
-  const result: {
-    constData?: string | Object,
-    locale?: string,
-    buffer?: any,
-    root?: any
-  } = {};
-
-  result.constData = aConstData;
-  const buffer = Buffer.from(
-    aConstData.replace('0x', ''),
-    'hex',
-  );
-  if (buffer.toString().length !== 0 && aConstData.replace('0x', '')
-    && aSchema !== null
-  ) {
-    result.locale = 'en';
-    result.buffer = buffer;
-    result.root = aSchema;
+function getDeserializeConstData(statement) {
+  let result: { hex?: string } = {};
+  if ('buffer' in statement) {
+    try {
+      result = { ...protobuf.deserializeNFT(statement) };
+    } catch (error) {
+      // console.error(error);
+      result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
+    }
+  } else {
+    result.hex = statement.constData?.toString().replace('0x', '') || statement.constData;
   }
   return result;
 }
@@ -52,11 +43,10 @@ function preConstData(aConstData, aSchema) {
 //   return result;
 // }
 
-function getConstData(aConstData, aSchema) {
-  const statement = preConstData(aConstData, aSchema);
-  return JSON.stringify(
-    getDeserializeConstData(statement),
-  );
+function getConstData(constData, schema) {
+  const statement = parseConstData(constData, schema);
+
+  return JSON.stringify(getDeserializeConstData(statement));
 }
 
 // function getToken(aToken) {
@@ -78,15 +68,6 @@ function getConstData(aConstData, aSchema) {
 //       schema: collection.schema,
 //     }),
 //   );
-// }
-
-// function getData(aToken) {
-//   const result = {};
-//   result.owner = aToken.Owner;
-//   result.data = getConstData(aToken?.ConstData, aToken.schema);
-//   result.collectionId = aToken.collectionId;
-//   result.tokenId = aToken.tokenId;
-//   return result;
 // }
 
 function processProperties(schema: any, rawToken: UpDataStructsTokenData)
@@ -120,9 +101,9 @@ export async function getFormattedToken(tokenId: number, collectionInfo: ICollec
   const { collectionId } = collectionInfo;
   const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
 
-  // if (rawToken && rawToken.properties.length) {
-  //   console.log('with props', { collectionId, tokenId, token: rawToken.toJSON());
-  // }
-  return null;
-  // return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
+  if (rawToken && rawToken.properties.length) {
+    console.log('with props', { collectionId, tokenId, token: rawToken.toJSON() });
+  }
+  // return null;
+  return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
 }

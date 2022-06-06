@@ -1,6 +1,6 @@
 import { Transaction } from 'sequelize/types';
 import { del as delTokenDb } from '../../token/tokenDB';
-import { EventToken } from '../eventToken';
+import EventToken from '../eventToken';
 
 export class DestroyToken extends EventToken {
   async save(transaction: Transaction) {

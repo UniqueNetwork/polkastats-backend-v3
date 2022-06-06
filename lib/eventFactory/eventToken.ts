@@ -1,5 +1,6 @@
 import { Sequelize, Transaction } from 'sequelize/types';
 import { getFormattedToken } from 'lib/token/tokenData';
+import { ITokenDB } from 'lib/token/tokenDB.interface';
 import protobuf from '../../utils/protobuf';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
@@ -9,7 +10,7 @@ import { EventTypes } from './type';
 import { getFormattedCollectionById } from '../collection/collectionData';
 import { ICollectionSchemaInfo } from '../../crawlers/crawlers.interfaces';
 
-export class EventToken {
+export default abstract class EventToken {
   constructor(
     protected bridgeAPI: OpalAPI | TestnetAPI,
     protected sequelize: Sequelize,
@@ -18,51 +19,17 @@ export class EventToken {
     public timestamp: number,
   ) {
     if (!this.collectionId || !this.tokenId) {
+      // eslint-disable-next-line max-len
       throw new Error(`Can't create/modify token without collectionId(${this.collectionId}) or tokenId(${this.tokenId})`);
     }
   }
 
-  public async save(transaction: Transaction): Promise<void> {}
+  public abstract save(transaction: Transaction): Promise<void>;
 
-  public async getToken(): Promise<any> {
+  public async getToken(): Promise<ITokenDB> {
     const tokenSchema = await this.getTokenSchema();
     const token = await getFormattedToken(this.tokenId, tokenSchema, this.bridgeAPI);
     return token;
-  }
-
-  private parseConstData(constData, schema) {
-    const buffer = Buffer.from(constData.replace('0x', ''), 'hex');
-    if (buffer.toString().length !== 0 && constData.replace('0x', '') && schema !== null) {
-      return {
-        constData,
-        buffer,
-        locale: 'en',
-        root: schema,
-      };
-    }
-
-    return { constData };
-  }
-
-  private getDeserializeConstData(statement) {
-    const result = {};
-    if ('buffer' in statement) {
-      try {
-        return protobuf.deserializeNFT(statement);
-      } catch (error) {
-        console.error(error);
-        return {
-          hex: statement.constData?.toString().replace('0x', '') || statement.constData,
-        };
-      }
-    }
-
-    return result;
-  }
-
-  private getConstData(constData, schema) {
-    const statement = this.parseConstData(constData, schema);
-    return JSON.stringify(this.getDeserializeConstData(statement));
   }
 
   private async getTokenSchema(): Promise<ICollectionSchemaInfo | null> {

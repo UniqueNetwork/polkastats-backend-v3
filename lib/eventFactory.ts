@@ -3,7 +3,7 @@ import { CreateCollection } from './eventFactory/collection/createCollection';
 import { DestroyCollection } from './eventFactory/collection/destroyCollection';
 import { UpdateCollection } from './eventFactory/collection/updateCollection';
 import { EventCollection } from './eventFactory/eventCollection';
-import { EventToken } from './eventFactory/eventToken';
+import EventToken from './eventFactory/eventToken';
 import { CreateToken } from './eventFactory/token/createToken';
 import { DestroyToken } from './eventFactory/token/destroyToken';
 import { TransferToken } from './eventFactory/token/transferToken';
@@ -24,6 +24,7 @@ export class EventFactory {
     this.event = this.getEvent(this.bridgeAPI, sequelize, data, type, timestamp);
   }
 
+  // eslint-disable-next-line class-methods-use-this
   getEvent(bridgeAPI, sequelize, data, type, timestamp) {
     switch (type) {
       case EventTypes.TYPE_CREATE_COLLECTION:
@@ -56,8 +57,11 @@ export class EventFactory {
         // Do nothing, but type is known
         break;
       default:
+        // eslint-disable-next-line no-console
         console.log(`Unknown type ${type}`);
     }
+
+    return null;
   }
 
   async save(transaction: Transaction) {
