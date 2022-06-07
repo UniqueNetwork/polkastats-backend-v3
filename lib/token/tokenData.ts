@@ -27,6 +27,7 @@ function getDeserializeConstData(statement) {
       result = { ...protobuf.deserializeNFT(statement) };
     } catch (error) {
       // todo: Useless log now. Should log error by logger with collectionId and tokenId.
+      // eslint-disable-next-line no-console
       console.error(
         'getDeserializeConstData(): Could not process constData with existing schema.',
         // statement,
@@ -97,10 +98,6 @@ export async function getFormattedToken(tokenId: number, collectionInfo: ICollec
   : Promise<ITokenDB | null> {
   const { collectionId } = collectionInfo;
   const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
-
-  // if (rawToken && rawToken.properties.length) {
-  //   console.log('getFormattedToken()', rawToken.toJSON());
-  // }
 
   return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
 }
