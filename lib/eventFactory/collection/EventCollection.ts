@@ -1,11 +1,12 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { getCollectionById } from '../collectionData';
-import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import eventsDB from '../eventsDB';
-import { EventTypes } from './type';
+import { ICollectionDbEntity } from 'lib/collection/collectionDbEntity.interface';
+import { getFormattedCollectionById } from '../../collection/collectionData';
+import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
+import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
+import eventsDB from '../../events/eventsDB';
+import { EventTypes } from '../type';
 
-export abstract class EventCollection {
+export default abstract class EventCollection {
   constructor(
     protected bridgeAPI: OpalAPI | TestnetAPI,
     protected sequelize: Sequelize,
@@ -17,12 +18,12 @@ export abstract class EventCollection {
     }
   }
 
-  public async getCollection() {
+  public async getCollection(): Promise<ICollectionDbEntity | null> {
     if (!this.collectionId) {
-      return;
+      return null;
     }
 
-    const collection = await getCollectionById(this.collectionId, this.bridgeAPI);
+    const collection = await getFormattedCollectionById(this.collectionId, this.bridgeAPI);
     return {
       ...collection,
       date_of_creation: this.timestamp,

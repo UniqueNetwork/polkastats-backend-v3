@@ -1,6 +1,6 @@
-import blockDB from '../lib/blockDB';
+import blockDB from '../lib/block/blockDB';
 import { BlockListener } from './blockListener';
-import blockData from '../lib/blockData';
+import blockData from '../lib/block/blockData';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 export interface IBlocksGap {

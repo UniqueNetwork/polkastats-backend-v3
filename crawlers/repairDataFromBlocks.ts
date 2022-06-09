@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize } from 'sequelize/types';
-import blockDB from '../lib/blockDB';
+import blockDB from '../lib/block/blockDB';
 import { BlockListener } from './blockListener';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
