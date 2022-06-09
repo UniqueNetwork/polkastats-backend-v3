@@ -2,10 +2,10 @@ import pino, { Logger } from 'pino';
 import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
-import { ICollectionDB } from '../lib/collection/collectionDB.interface';
+import { ICollectionDbEntity } from '../lib/collection/collectionDbEntity.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
 import { getFormattedCollectionById } from '../lib/collection/collectionData';
-import { save as saveCollectionDb, del as delCollectionDb } from '../lib/collection/collectionDB';
+import { save as saveCollectionDb, del as delCollectionDb } from '../lib/collection/collectionDb';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 
 class CollectionsScanner {
@@ -19,7 +19,7 @@ class CollectionsScanner {
     this.logger = logger;
   }
 
-  private saveCollection(collection: ICollectionDB) : Promise<any> {
+  private saveCollection(collection: ICollectionDbEntity) : Promise<any> {
     this.logger.trace({ collectionId: collection.collection_id }, 'Save collection');
 
     return saveCollectionDb({

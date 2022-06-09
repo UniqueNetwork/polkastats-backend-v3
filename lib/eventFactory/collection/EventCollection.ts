@@ -1,5 +1,5 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { ICollectionDB } from 'lib/collection/collectionDB.interface';
+import { ICollectionDbEntity } from 'lib/collection/collectionDbEntity.interface';
 import { getFormattedCollectionById } from '../../collection/collectionData';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
@@ -18,7 +18,7 @@ export default abstract class EventCollection {
     }
   }
 
-  public async getCollection(): Promise<ICollectionDB | null> {
+  public async getCollection(): Promise<ICollectionDbEntity | null> {
     if (!this.collectionId) {
       return null;
     }

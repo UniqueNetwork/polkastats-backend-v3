@@ -3,7 +3,7 @@ import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
 import { getProtoBufRoot } from '../../utils/protobuf';
 import { stringifyFields } from '../../utils/utils';
-import { ICollectionDB } from './collectionDB.interface';
+import { ICollectionDbEntity } from './collectionDbEntity.interface';
 
 const COLLECTION_FIELDS = [
   'collection_id',
@@ -29,7 +29,7 @@ const COLLECTION_FIELDS = [
   'collection_cover',
 ];
 
-function prepareQueryReplacements(collection: ICollectionDB) {
+function prepareQueryReplacements(collection: ICollectionDbEntity) {
   const { date_of_creation } = collection;
 
   return {
@@ -42,7 +42,7 @@ function prepareQueryReplacements(collection: ICollectionDB) {
   };
 }
 
-function createQueryOptions(collection: ICollectionDB, type: QueryTypes) {
+function createQueryOptions(collection: ICollectionDbEntity, type: QueryTypes) {
   return {
     type,
     logging: false,
@@ -78,7 +78,7 @@ export async function save({
   transaction = null,
   excludeFields = [],
 }: {
-  collection: ICollectionDB,
+  collection: ICollectionDbEntity,
   sequelize: Sequelize,
   transaction?: Transaction | null,
   excludeFields?: string[]

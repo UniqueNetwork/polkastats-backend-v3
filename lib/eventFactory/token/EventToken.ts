@@ -1,10 +1,10 @@
 import { Sequelize, Transaction } from 'sequelize/types';
-import { ITokenDB } from '../../token/tokenDB.interface';
+import { ITokenDbEntity } from '../../token/tokenDbEntity.interface';
 import { getFormattedToken } from '../../token/tokenData';
 import protobuf from '../../../utils/protobuf';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
-import { save as saveCollectionDb, getCollectionsSchemaInfo } from '../../collection/collectionDB';
+import { save as saveCollectionDb, getCollectionsSchemaInfo } from '../../collection/collectionDb';
 import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
 import { getFormattedCollectionById } from '../../collection/collectionData';
@@ -24,7 +24,7 @@ export default abstract class EventToken {
     }
   }
 
-  public async getToken(): Promise<ITokenDB> {
+  public async getToken(): Promise<ITokenDbEntity> {
     const tokenSchema = await this.getTokenSchema();
     const token = await getFormattedToken(this.tokenId, tokenSchema, this.bridgeAPI);
     return token;

@@ -3,10 +3,10 @@ import { Sequelize } from 'sequelize/types';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { getFormattedToken } from '../lib/token/tokenData';
-import { getCollectionsSchemaInfo } from '../lib/collection/collectionDB';
-import { ITokenDB } from '../lib/token/tokenDB.interface';
+import { getCollectionsSchemaInfo } from '../lib/collection/collectionDb';
+import { ITokenDbEntity } from '../lib/token/tokenDbEntity.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
-import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDB';
+import { save as saveTokenDb, del as delTokenDb } from '../lib/token/tokenDb';
 import { ICrawlerModuleConstructorArgs, ICollectionSchemaInfo } from './crawlers.interfaces';
 
 class TokensScanner {
@@ -22,8 +22,6 @@ class TokensScanner {
 
   private async getCollectionTokens(collectionInfo: ICollectionSchemaInfo) {
     const { collectionId } = collectionInfo;
-    // todo: debug
-    // const tokensCount = Math.min((await this.bridgeApi.getTokenCount(collectionId)), 2);
     const tokensCount = await this.bridgeApi.getTokenCount(collectionId);
 
     const tokens = [];
@@ -51,7 +49,7 @@ class TokensScanner {
     };
   }
 
-  private saveTokens(tokens: ITokenDB[]) {
+  private saveTokens(tokens: ITokenDbEntity[]) {
     return Promise.all(tokens.map((token) => saveTokenDb({
       token,
       sequelize: this.sequelize,

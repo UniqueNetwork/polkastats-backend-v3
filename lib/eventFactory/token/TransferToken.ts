@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize/types';
-import { save as saveTokenDb } from '../../token/tokenDB';
+import { save as saveTokenDb } from '../../token/tokenDb';
 import EventToken from './EventToken';
 
 export default class TransferToken extends EventToken {

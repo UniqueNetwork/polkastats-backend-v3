@@ -1,5 +1,5 @@
 import { Transaction } from 'sequelize/types';
-import { del as delTokenDb } from '../../token/tokenDB';
+import { del as delTokenDb } from '../../token/tokenDb';
 import EventToken from './EventToken';
 
 export default class DestroyToken extends EventToken {

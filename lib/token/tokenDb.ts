@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
 import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
-import { ITokenDB } from './tokenDB.interface';
+import { ITokenDbEntity } from './tokenDbEntity.interface';
 
 const TOKEN_FIELDS = [
   'token_id',
@@ -12,7 +12,7 @@ const TOKEN_FIELDS = [
   'date_of_creation',
 ];
 
-function prepareQueryReplacements(token: ITokenDB) {
+function prepareQueryReplacements(token: ITokenDbEntity) {
   const { owner, date_of_creation } = token;
 
   return {
@@ -63,7 +63,7 @@ export async function save({
   transaction = null,
   excludeFields = [],
 } : {
-  token: ITokenDB,
+  token: ITokenDbEntity,
   sequelize: Sequelize,
   transaction?: Transaction,
   excludeFields?: string[]

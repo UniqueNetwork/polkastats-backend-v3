@@ -3,7 +3,7 @@ import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { UpDataStructsTokenData } from '@unique-nft/types';
 import { normalizeSubstrateAddress } from '../../utils/utils';
 import protobuf from '../../utils/protobuf';
-import { ITokenDB } from './tokenDB.interface';
+import { ITokenDbEntity } from './tokenDbEntity.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 
 function parseConstDataValue(constData, schema) {
@@ -78,7 +78,7 @@ function processProperties(schema: any, rawToken: UpDataStructsTokenData)
 }
 
 function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo, rawToken: UpDataStructsTokenData)
-  : ITokenDB {
+  : ITokenDbEntity {
   const { collectionId, schema } = collectionInfo;
 
   const rawOwnerJson = rawToken.owner.toJSON() as { substrate?: string, ethereum?: string };
@@ -95,7 +95,7 @@ function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo,
 }
 
 export async function getFormattedToken(tokenId: number, collectionInfo: ICollectionSchemaInfo, bridgeAPI: OpalAPI)
-  : Promise<ITokenDB | null> {
+  : Promise<ITokenDbEntity | null> {
   const { collectionId } = collectionInfo;
   const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
 

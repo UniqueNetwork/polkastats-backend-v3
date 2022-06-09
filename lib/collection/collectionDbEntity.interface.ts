@@ -1,4 +1,4 @@
-export type ICollectionDBFieldsetLimits = {
+export type ICollectionDbEntityFieldsetLimits = {
   token_limit: number,
   limits_account_ownership?: number,
   limits_sponsore_data_size?: number,
@@ -7,14 +7,14 @@ export type ICollectionDBFieldsetLimits = {
   owner_can_destroy?: boolean
 };
 
-export type ICollectionDBFieldsetSchema = {
+export type ICollectionDbEntityFieldsetSchema = {
   offchain_schema?: string,
   const_chain_schema?: Object,
   variable_on_chain_schema?: { collectionCover?: string },
   schema_version?: string
 };
 
-export interface ICollectionDB extends ICollectionDBFieldsetLimits, ICollectionDBFieldsetSchema {
+export interface ICollectionDbEntity extends ICollectionDbEntityFieldsetLimits, ICollectionDbEntityFieldsetSchema {
   collection_id: number,
   owner: string,
   owner_normalized: string,

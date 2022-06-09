@@ -11,10 +11,10 @@ import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import {
-  ICollectionDB,
-  ICollectionDBFieldsetLimits,
-  ICollectionDBFieldsetSchema,
-} from './collectionDB.interface';
+  ICollectionDbEntity,
+  ICollectionDbEntityFieldsetLimits,
+  ICollectionDbEntityFieldsetSchema,
+} from './collectionDbEntity.interface';
 
 const logger = pino({ name: 'CollectionData', level: process.env.PINO_LOG_LEVEL || 'info' });
 
@@ -33,7 +33,7 @@ function getSponsoredDataRate(sponsoringRateLimits: Option<UpDataStructsSponsori
 /**
  * Processes raw 'limits' field value.
  */
-function processLimits(collection: UpDataStructsRpcCollection): ICollectionDBFieldsetLimits {
+function processLimits(collection: UpDataStructsRpcCollection): ICollectionDbEntityFieldsetLimits {
   const { limits } = collection;
   return {
     token_limit: Number(limits.tokenLimit) || 0,
@@ -61,7 +61,7 @@ function processSponsorship(collection: UpDataStructsRpcCollection): { sponsorsh
  * Processes raw 'properties' field value.
  */
 function processProperties(collection: UpDataStructsRpcCollection)
-  : ICollectionDBFieldsetSchema & { properties: Object } {
+  : ICollectionDbEntityFieldsetSchema & { properties: Object } {
   const { properties: rawProperties } = collection;
 
   // For now we should have the exact set of '_old_*' properties.
@@ -129,7 +129,7 @@ function processTokenPropertyPermissions(collection: UpDataStructsRpcCollection)
 /**
  * Creates 'collection_cover' field value from other fields.
  */
-function createCollectionCoverValue(schemaFields: ICollectionDBFieldsetSchema) {
+function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSchema) {
   let result = null;
 
   const { schema_version, offchain_schema, variable_on_chain_schema } = schemaFields;
@@ -161,7 +161,7 @@ function createCollectionCoverValue(schemaFields: ICollectionDBFieldsetSchema) {
  * Creates collection object in database suitable format
  * from raw collection object retrieved from chain api.
  */
-function formatCollectionData(collectionId: number, rawCollection: UpDataStructsRpcCollection): ICollectionDB {
+function formatCollectionData(collectionId: number, rawCollection: UpDataStructsRpcCollection): ICollectionDbEntity {
   const owner = rawCollection.owner.toString();
   const processedProperties = processProperties(rawCollection);
 
@@ -186,7 +186,8 @@ function formatCollectionData(collectionId: number, rawCollection: UpDataStructs
  * Requests raw chain collection by collectionId
  * and returns collection object in database model format.
  */
-export async function getFormattedCollectionById(collectionId, bridgeAPI: OpalAPI): Promise<ICollectionDB | null> {
+export async function getFormattedCollectionById(collectionId, bridgeAPI: OpalAPI)
+  : Promise<ICollectionDbEntity | null> {
   const rawCollection = await bridgeAPI.getCollection(collectionId);
 
   return rawCollection ? formatCollectionData(collectionId, rawCollection) : null;

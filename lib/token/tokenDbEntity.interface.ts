@@ -1,4 +1,4 @@
-export interface ITokenDB {
+export interface ITokenDbEntity {
   // id: number,
   token_id: number,
   collection_id: number,
