@@ -1,8 +1,8 @@
 import { Transaction } from 'sequelize/types';
-import { EventCollection } from '../eventCollection';
-import collectionDB from '../../collectionDB';
+import EventCollection from './EventCollection';
+import { save as saveCollectionDb } from '../../collection/collectionDb';
 
-export class UpdateCollection extends EventCollection {
+export default class CreateCollection extends EventCollection {
   public async save(transaction: Transaction): Promise<void> {
     const isDestroyed = await this.isDestroyed();
 
@@ -13,11 +13,10 @@ export class UpdateCollection extends EventCollection {
     const collection = await this.getCollection();
 
     if (collection) {
-      await collectionDB.save({
+      await saveCollectionDb({
         collection,
         sequelize: this.sequelize,
         transaction,
-        excludeFields: ['date_of_creation'],
       });
     }
   }

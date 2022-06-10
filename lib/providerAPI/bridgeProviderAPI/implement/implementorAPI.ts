@@ -1,21 +1,25 @@
 import { ApiPromise } from '@polkadot/api';
-import { AnyJson } from '@polkadot/types/types';
+import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/types';
 
-export abstract class ImplementorAPI {  
-  constructor (public _api: ApiPromise) {}
-  abstract impGetCollection(collectionId): Promise<any>;
+export default abstract class ImplementorAPI {
+  constructor(public api: ApiPromise) {}
+
+  abstract impGetCollection(collectionId): Promise<UpDataStructsRpcCollection | null>;
+
   abstract impGetCollectionCount(): Promise<number>;
-  abstract impGetTokenCount(collectionId): Promise<number>;
-  abstract impGetToken(collectionId, tokenId): Promise<any>;
 
-  async impGetBlockHash (blockNumber) {
-    return await this._api.rpc.chain.getBlockHash(blockNumber);
+  abstract impGetTokenCount(collectionId): Promise<number>;
+
+  abstract impGetToken(collectionId, tokenId): Promise<UpDataStructsTokenData | null>;
+
+  async impGetBlockHash(blockNumber) {
+    return this.api.rpc.chain.getBlockHash(blockNumber);
   }
 
-  toObject(aValue) {
+  static toObject(aValue) {
     let result = aValue;
     if (!('Owner' in aValue)) {
-      result = Object.assign({}, result.toJSON());
+      result = { ...result.toJSON() };
     }
     return result;
   }

@@ -136,6 +136,23 @@ function normalizeSubstrateAddress(address) {
   return encodeAddress(decodeAddress(address));
 }
 
+function capitalizeFirstLetter(str = '') {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+function capitalizeAndMapObject(obj, fnValueGetter) {
+  return Object.keys(obj).reduce((res, key) => {
+    res[capitalizeFirstLetter(key)] = fnValueGetter(obj, key);
+    return res;
+  }, {});
+}
+
+function stringifyFields(obj, fieldsToStringify) {
+  return Object.fromEntries(
+    fieldsToStringify.map((k) => [k, obj[k] ? JSON.stringify(obj[k]) : obj[k]]),
+  );
+}
+
 module.exports = {
   formatNumber,
   shortHash,
@@ -150,4 +167,7 @@ module.exports = {
   bufferToJSON,
   getAmount,
   normalizeSubstrateAddress,
+  capitalizeFirstLetter,
+  capitalizeAndMapObject,
+  stringifyFields,
 };

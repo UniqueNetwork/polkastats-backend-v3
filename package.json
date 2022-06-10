@@ -22,7 +22,7 @@
     "docker:rebuild:graphql": "docker-compose -f docker/polkastats-backend/docker-compose-polkadot.yml up -d graphql-engine",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "migration:create": "node_modules/sequelize-cli/lib/sequelize migration:generate --name",
-    "migration": "node_modules/sequelize-cli/lib/sequelize db:migrate",
+    "migration": "ts-node node_modules/sequelize-cli/lib/sequelize db:migrate",
     "migration:undo": "node_modules/sequelize-cli/lib/sequelize db:migrate:undo"
   },
   "repository": {
@@ -39,11 +39,11 @@
   "license": "Apache-2.0",
   "homepage": "https://github.com/UniqueNetwork/polkastats-backend-v3#readme",
   "dependencies": {
-    "@polkadot/api": "^7.8.1",
-    "@polkadot/keyring": "^8.4.1",
-    "@polkadot/types": "^7.8.1",
-    "@polkadot/util": "^8.4.1",
-    "@unique-nft/types": "^0.4.0",
+    "@polkadot/api": "^8.6.2",
+    "@polkadot/keyring": "^9.3.1",
+    "@polkadot/types": "^8.6.2",
+    "@polkadot/util": "^9.3.1",
+    "@unique-nft/types": "^0.6.0-4",
     "bignumber.js": "^9.0.2",
     "chalk": "^4.1.2",
     "dotenv": "^10.0.0",
@@ -53,10 +53,11 @@
     "prom-client": "^14.0.1",
     "protobufjs": "^6.11.2",
     "sequelize": "^6.7.0",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "ts-node": "^10.8.1"
   },
   "devDependencies": {
-    "@polkadot/dev": "^0.65.35",
+    "@polkadot/dev": "^0.66.32",
     "@types/node": "^17.0.24",
     "@types/pino": "^7.0.5",
     "@types/sequelize": "^4.28.13",

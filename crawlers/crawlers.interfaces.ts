@@ -17,3 +17,8 @@ export interface ICrawlerModule {
   start: (args: ICrawlerModuleConstructorArgs) => Promise<void>;
   config?: ICrawlerModuleConfig;
 }
+
+export interface ICollectionSchemaInfo {
+  collectionId: number,
+  schema: any
+}
