@@ -27,7 +27,10 @@ export default abstract class EventToken {
   public async getToken(): Promise<ITokenDbEntity> {
     const tokenSchema = await this.getTokenSchema();
     const token = await getFormattedToken(this.tokenId, tokenSchema, this.bridgeAPI);
-    return token;
+    return {
+      ...token,
+      date_of_creation: this.timestamp,
+    };
   }
 
   private async getTokenSchema(): Promise<ICollectionSchemaInfo | null> {
