@@ -30,6 +30,11 @@ async function updateDependantColumns(queryInterface, Sequelize, columnsUpdateFn
 module.exports = {
   async up (queryInterface, Sequelize) {
     return updateDependantColumns(queryInterface, Sequelize, async (qI, Seq, transaction ) => {
+
+      await qI.sequelize.query('UPDATE collections SET owner_can_destroy=false WHERE owner_can_destroy IS NULL');
+      
+      await qI.sequelize.query('UPDATE collections SET owner_can_transfer=false WHERE owner_can_transfer IS NULL');
+
       await qI.changeColumn('collections', 'owner_can_transfer', 
       {
         type: Seq.DataTypes.BOOLEAN,
