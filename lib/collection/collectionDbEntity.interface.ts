@@ -3,8 +3,8 @@ export type ICollectionDbEntityFieldsetLimits = {
   limits_account_ownership?: number,
   limits_sponsore_data_size?: number,
   limits_sponsore_data_rate?: number,
-  owner_can_transfer?: boolean,
-  owner_can_destroy?: boolean
+  owner_can_transfer: boolean,
+  owner_can_destroy: boolean
 };
 
 export type ICollectionDbEntityFieldsetSchema = {
