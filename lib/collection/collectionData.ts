@@ -34,14 +34,16 @@ function getSponsoredDataRate(sponsoringRateLimits: Option<UpDataStructsSponsori
  * Processes raw 'limits' field value.
  */
 function processLimits(collection: UpDataStructsRpcCollection): ICollectionDbEntityFieldsetLimits {
-  const { limits } = collection;
+  const { limits: rawLimits } = collection;
+  const limits = rawLimits.toHuman();
+
   return {
     token_limit: Number(limits.tokenLimit) || 0,
     limits_account_ownership: Number(limits.accountTokenOwnershipLimit) || 0,
     limits_sponsore_data_size: Number(limits.sponsoredDataSize),
-    limits_sponsore_data_rate: getSponsoredDataRate(limits.sponsoredDataRateLimit),
-    owner_can_transfer: !!limits.ownerCanTransfer.isTrue,
-    owner_can_destroy: !!limits.ownerCanDestroy.isTrue,
+    limits_sponsore_data_rate: getSponsoredDataRate(rawLimits.sponsoredDataRateLimit),
+    owner_can_transfer: !!limits.ownerCanTransfer,
+    owner_can_destroy: !!limits.ownerCanDestroy,
   };
 }
 
