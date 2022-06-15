@@ -52,7 +52,7 @@ function createQueryOptions(collection: ICollectionDbEntity, type: QueryTypes) {
   };
 }
 
-export function get({ collectionId = null, selectList = COLLECTION_FIELDS, sequelize }) {
+export async function get({ collectionId = null, selectList = COLLECTION_FIELDS, sequelize }) {
   let qWhere = '';
 
   const qOptions = {
@@ -63,13 +63,13 @@ export function get({ collectionId = null, selectList = COLLECTION_FIELDS, seque
   };
 
   if (collectionId) {
-    qOptions.plain = true;
     qOptions.replacements = { collectionId };
-
     qWhere = 'WHERE collection_id = :collectionId';
   }
 
-  return sequelize.query(`SELECT ${selectList.join(',')} FROM collections ${qWhere}`, qOptions);
+  const result = await sequelize.query(`SELECT ${selectList.join(',')} FROM collections ${qWhere}`, qOptions);
+
+  return result;
 }
 
 export async function save({
@@ -125,7 +125,7 @@ export async function getCollectionsSchemaInfo({ collectionId = null, sequelize 
     collectionId,
     selectList: ['collection_id', 'const_chain_schema'],
     sequelize,
-  });
+  }) || [];
 
   return collections.map((collection) => ({
     collectionId: Number(collection.collection_id),
