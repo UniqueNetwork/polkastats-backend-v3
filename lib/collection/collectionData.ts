@@ -136,9 +136,9 @@ function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSch
   const { schema_version, offchain_schema, variable_on_chain_schema } = schemaFields;
 
   try {
-    const urlPattern = /^["']?(http[s]?:\/[^"']+)["']?$/;
+    const urlPattern = /^["']?(http[s]?:\/\/[^"']+)["']?$/;
 
-    if (schema_version === SchemaVersion.IMAGE_URL && urlPattern.test(offchain_schema)) {
+    if (schema_version === SchemaVersion.IMAGE_URL && offchain_schema && urlPattern.test(offchain_schema)) {
       const match = offchain_schema.match(urlPattern);
       const plainUrl = match[1];
       result = String(plainUrl).replace('{id}', '1');
