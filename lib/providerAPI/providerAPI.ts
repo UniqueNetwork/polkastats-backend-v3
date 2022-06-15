@@ -12,30 +12,30 @@ class ProviderAPI {
   }
 
   async getApi(types?: any): Promise<ApiPromise> {
-    return await ApiPromise.create({
-      provider: this.provider
+    return ApiPromise.create({
+      provider: this.provider,
     });
   }
 }
 
-class WestendOpalApi extends ProviderAPI { };
+class WestendOpalApi extends ProviderAPI { }
 
 class OpalApi extends ProviderAPI {
   async getApi(): Promise<ApiPromise> {
-    return await ApiPromise.create({
+    return ApiPromise.create({
       provider: this.provider,
       rpc: {
-        unique: unique.rpc
-      }
+        unique: unique.rpc,
+      },
     });
   }
-};
+}
 
 class Testnet2Api extends ProviderAPI {
   getApi(types) {
     return ApiPromise.create({
       provider: this.provider,
-      types
+      types,
     });
   }
 }

@@ -6,7 +6,6 @@ import {
   UpDataStructsRpcCollection,
   UpDataStructsSponsoringRateLimit,
 } from '@unique-nft/types';
-import { IPFS_URL } from '../../config/config';
 import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
@@ -144,7 +143,7 @@ function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSch
     } else if (variable_on_chain_schema) {
       const { collectionCover } = variable_on_chain_schema;
       if (collectionCover) {
-        result = `${IPFS_URL}${collectionCover}`;
+        result = collectionCover;
       }
     }
   } catch (error) {
