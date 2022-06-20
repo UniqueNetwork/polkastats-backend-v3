@@ -1,4 +1,4 @@
-import { UpDataStructsRpcCollection } from '@unique-nft/types';
+import { UpDataStructsRpcCollection } from '@unique-nft/unique-mainnet-types';
 import AbstractAPI from './abstractAPI';
 
 export class TestnetAPI extends AbstractAPI {

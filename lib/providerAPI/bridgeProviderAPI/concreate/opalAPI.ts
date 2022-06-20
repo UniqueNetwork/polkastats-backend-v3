@@ -1,4 +1,3 @@
-// import { UpDataStructsRpcCollection } from '@unique-nft/types';
 import AbstractAPI from './abstractAPI';
 
 export class OpalAPI extends AbstractAPI {

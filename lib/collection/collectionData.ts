@@ -5,7 +5,7 @@ import { Option } from '@polkadot/types';
 import {
   UpDataStructsRpcCollection,
   UpDataStructsSponsoringRateLimit,
-} from '@unique-nft/types';
+} from '@unique-nft/unique-mainnet-types';
 import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';

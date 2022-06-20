@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/types';
+import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/unique-mainnet-types';
 
 export default abstract class ImplementorAPI {
   constructor(public api: ApiPromise) {}

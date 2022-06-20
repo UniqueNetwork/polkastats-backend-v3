@@ -41,9 +41,10 @@
   "dependencies": {
     "@polkadot/api": "^8.6.2",
     "@polkadot/keyring": "^9.3.1",
+    "@polkadot/rpc-provider": "^8.9.1",
     "@polkadot/types": "^8.6.2",
     "@polkadot/util": "^9.3.1",
-    "@unique-nft/types": "^0.6.0-4",
+    "@unique-nft/unique-mainnet-types": "^0.6.1",
     "bignumber.js": "^9.0.2",
     "chalk": "^4.1.2",
     "dotenv": "^10.0.0",

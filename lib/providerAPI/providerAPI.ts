@@ -1,7 +1,8 @@
-/// <reference types="@unique-nft/types/augment-api-rpc" />
+/* eslint-disable max-classes-per-file */
+/// <reference types="@unique-nft/unique-mainnet-types/augment-api-rpc" />
 import { ApiPromise } from '@polkadot/api';
 import { WsProvider } from '@polkadot/rpc-provider';
-import { unique } from '@unique-nft/types/definitions';
+import { unique } from '@unique-nft/unique-mainnet-types/definitions';
 import { TypeProvider } from './type/provider';
 
 class ProviderAPI {
@@ -11,6 +12,7 @@ class ProviderAPI {
     this.provider = new WsProvider(url);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async getApi(types?: any): Promise<ApiPromise> {
     return ApiPromise.create({
       provider: this.provider,
@@ -47,17 +49,17 @@ export class ProviderFactory {
     private url,
     private type = null,
   ) {
-    this.provider = this.getProvider();
+    this.provider = this.getProvider(type);
   }
 
-  getProvider() {
-    switch (this.type) {
+  getProvider(type) {
+    switch (type) {
       case TypeProvider.WESTEND:
         return new WestendOpalApi(this.url);
       case TypeProvider.OPAL:
       case TypeProvider.QUARTZ:
         return new OpalApi(this.url);
-      case TypeProvider.TESTNET2:
+      default:
         return new Testnet2Api(this.url);
     }
   }
