@@ -26,8 +26,8 @@ class Rescanner extends BlockListener {
     if (blocks.length === 0) {
       return;
     }
+    await Promise.all(blocks.map(({ block_number }) => this.blockProcessing(block_number)));
 
-    await Promise.all(blocks.map((block) => this.blockProcessing(block.block_number)));
     await this.rescan();
   }
 }

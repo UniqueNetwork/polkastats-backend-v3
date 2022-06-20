@@ -14,7 +14,8 @@ import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 import { EventSection } from '../constants';
 
 const loggerOptions = {
-  crawler: 'blockListener',
+  name: 'BlockListener',
+  level: process.env.PINO_LOG_LEVEL || 'info',
 };
 
 export class BlockListener {
@@ -28,13 +29,13 @@ export class BlockListener {
     protected api: ApiPromise,
     protected sequelize: Sequelize,
   ) {
-    this.logger = pino({ name: this.constructor.name });
+    this.logger = pino(loggerOptions);
     this.bridgeApi = new BridgeAPI(api).bridgeAPI;
     this.eventFacade = new EventFacade(this.bridgeApi, this.sequelize);
   }
 
   async startBlockListening(): Promise<void> {
-    this.logger.info('Block listening was started');
+    this.logger.info('Crawler started');
     await this.bridgeApi.api.rpc.chain.subscribeNewHeads(async (header) => {
       const blockNumber = header.number.toNumber();
       this.logger.debug(`New block received #${blockNumber} has hash ${header.hash}`);

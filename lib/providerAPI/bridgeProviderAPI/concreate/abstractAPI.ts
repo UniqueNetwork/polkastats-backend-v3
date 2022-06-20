@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/types';
+import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/unique-mainnet-types';
 import ImplementorAPI from '../implement/implementorAPI';
 
 export default class AbstractAPI {
