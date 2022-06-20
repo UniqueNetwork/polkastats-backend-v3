@@ -1,28 +1,41 @@
 const pino = require('pino');
 const { QueryTypes } = require('sequelize');
 
-const logger = pino()
+const logger = pino({ name: 'SystemCrawler', level: process.env.PINO_LOG_LEVEL || 'info' });
 
-const loggerOptions = {
-  crawler: `system`
-};
+function insertRow(sequelize, blockHeight, chain, nodeName, nodeVersion) {
+  logger.info({
+    blockHeight, chain, nodeName, nodeVersion,
+  }, 'Write new system record');
 
-/**
- * Get polkadot node information and store in database
- *
- * @param {object} api             Polkadot API object
- * @param {object} sequelize            Postgres pool object
- */
-async function start({api, sequelize, config}) {
+  return sequelize.query(
+    `INSERT INTO system (block_height, chain, node_name, node_version, timestamp
+    ) VALUES (:blockHeight, :chain, :nodeName, :nodeVersion, :timestamp)`,
+    {
+      type: QueryTypes.INSERT,
+      plain: true,
+      replacements: {
+        blockHeight,
+        chain,
+        nodeName,
+        nodeVersion,
+        timestamp: new Date().getTime(),
+      },
+    },
+  );
+}
 
-  logger.info(loggerOptions, `Starting system crawler`);
+async function start({ api, sequelize }) {
+  logger.info('Starting crawler');
 
-  const [blockHeight, chain, nodeName, nodeVersion] = await Promise.all([
+  const rawData = await Promise.all([
     api.derive.chain.bestNumber(),
     api.rpc.system.chain(),
     api.rpc.system.name(),
-    api.rpc.system.version()
+    api.rpc.system.version(),
   ]);
+
+  const [blockHeight, chain, nodeName, nodeVersion] = rawData.map((r) => r.toString());
 
   const isSameNodeAndState = await sequelize.query(
     `
@@ -31,20 +44,20 @@ async function start({api, sequelize, config}) {
     ) as lastSystemRun
     where 
       chain = :chain and 
-      node_name = :node_name and
-      node_version = :node_version and
-      block_height = :block_height
+      node_name = :nodeName and
+      node_version = :nodeVersion and
+      block_height = :blockHeight
     `,
     {
       type: QueryTypes.SELECT,
       logging: false,
       plain: true,
       replacements: {
-        block_height: blockHeight.toString(),
+        blockHeight,
         chain,
-        node_name: nodeName,
-        node_version: nodeVersion,
-      }
+        nodeName,
+        nodeVersion,
+      },
     },
   );
 
@@ -53,23 +66,4 @@ async function start({api, sequelize, config}) {
   }
 }
 
-async function insertRow(sequelize, blockHeight, chain, nodeName, nodeVersion) {
-  console.log(blockHeight.toString());
-  await sequelize.query(
-    `INSERT INTO system (block_height, chain, node_name, node_version, timestamp
-    ) VALUES (:block_height, :chain, :node_name, :node_version, :timestamp)`,
-    {
-      type: QueryTypes.INSERT,
-      plain: true,
-      replacements: {
-        block_height: blockHeight.toString(),
-        chain,
-        node_name: nodeName,
-        node_version: nodeVersion,
-        timestamp: new Date().getTime()
-      }
-    }
-  );    
-}
-
-module.exports = { start }
+module.exports = { start };
