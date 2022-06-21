@@ -16,19 +16,19 @@ import {
 
 const logger = pino({ name: 'CollectionData', level: process.env.PINO_LOG_LEVEL || 'info' });
 
-type SponsoringRateLimits = { sponsoringDisabled?: boolean } | number | null;
+type SponsoringRateLimits = { blocks?: number, sponsoringDisabled?: boolean | null };
 
-// todo: Find out the meaning of this option and it's possible values
 function getSponsoredDataRate(sponsoringRateLimits: SponsoringRateLimits): number {
-  if (!Number.isNaN(Number(sponsoringRateLimits))) {
-    return Number(sponsoringRateLimits);
+  if (!Number.isNaN(Number(sponsoringRateLimits.blocks))) {
+    return Number(sponsoringRateLimits.blocks);
   }
 
-  if (typeof sponsoringRateLimits === 'object' && sponsoringRateLimits?.sponsoringDisabled) {
+  // The fact of existence of sponsoringDisabled property seems to mean that sponsoring is disabled
+  if (sponsoringRateLimits.sponsoringDisabled !== undefined) {
     return -1;
   }
 
-  return -1;
+  return null;
 }
 
 /**
