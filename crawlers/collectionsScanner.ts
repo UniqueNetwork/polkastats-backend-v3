@@ -1,6 +1,5 @@
 import pino, { Logger } from 'pino';
 import { OpalAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from 'lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { Sequelize } from 'sequelize/types';
 import { ICollectionDbEntity } from '../lib/collection/collectionDbEntity.interface';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
@@ -13,7 +12,7 @@ class CollectionsScanner {
 
   private sequelize: Sequelize;
 
-  private bridgeApi: OpalAPI | TestnetAPI;
+  private bridgeApi: OpalAPI;
 
   constructor({ logger } : { logger: Logger }) {
     this.logger = logger;
@@ -85,7 +84,8 @@ class CollectionsScanner {
     this.sequelize = sequelize;
 
     const { bridgeAPI } = new BridgeAPI(api);
-    this.bridgeApi = bridgeAPI;
+
+    this.bridgeApi = bridgeAPI as OpalAPI;
 
     const { pollingTime } = config;
 

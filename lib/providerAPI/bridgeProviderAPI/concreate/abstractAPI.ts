@@ -1,29 +1,30 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable class-methods-use-this */
-import { UpDataStructsRpcCollection, UpDataStructsTokenData } from '@unique-nft/unique-mainnet-types';
 import ImplementorAPI from '../implement/implementorAPI';
 
 export default class AbstractAPI {
+  private readonly errorMgs = 'This method is abstract';
+
   constructor(public impl: ImplementorAPI) {}
 
   get api() {
     return this.impl.api;
   }
 
-  getCollection(collectionId): Promise<UpDataStructsRpcCollection | null> {
-    throw new Error('This is method is abastrac');
+  getCollection(collectionId): Promise<unknown> {
+    throw new Error(this.errorMgs);
   }
 
-  getToken(collectionId, tokenId): Promise<UpDataStructsTokenData | null> {
-    throw new Error('This is method is abastract');
+  getToken(collectionId, tokenId): Promise<unknown> {
+    throw new Error(this.errorMgs);
   }
 
   getTokenCount(collectionId) {
-    throw new Error('This is method is abastract');
+    throw new Error(this.errorMgs);
   }
 
   getCollectionCount() {
-    throw new Error('This is method is abastract');
+    throw new Error(this.errorMgs);
   }
 
   async getBlockHash(blockNumber) {

@@ -3,7 +3,6 @@ import { ITokenDbEntity } from '../../token/tokenDbEntity.interface';
 import { getFormattedToken } from '../../token/tokenData';
 import protobuf from '../../../utils/protobuf';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { save as saveCollectionDb, getCollectionsSchemaInfo } from '../../collection/collectionDb';
 import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
@@ -12,7 +11,7 @@ import { ICollectionSchemaInfo } from '../../../crawlers/crawlers.interfaces';
 
 export default abstract class EventToken {
   constructor(
-    protected bridgeAPI: OpalAPI | TestnetAPI,
+    protected bridgeAPI: OpalAPI,
     protected sequelize: Sequelize,
     public collectionId: number,
     public tokenId: number,

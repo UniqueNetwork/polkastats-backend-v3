@@ -2,13 +2,12 @@ import { Sequelize, Transaction } from 'sequelize/types';
 import { ICollectionDbEntity } from 'lib/collection/collectionDbEntity.interface';
 import { getFormattedCollectionById } from '../../collection/collectionData';
 import { OpalAPI } from '../../providerAPI/bridgeProviderAPI/concreate/opalAPI';
-import { TestnetAPI } from '../../providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import eventsDB from '../../events/eventsDB';
 import { EventTypes } from '../type';
 
 export default abstract class EventCollection {
   constructor(
-    protected bridgeAPI: OpalAPI | TestnetAPI,
+    protected bridgeAPI: OpalAPI,
     protected sequelize: Sequelize,
     public collectionId: number,
     public timestamp: number,
