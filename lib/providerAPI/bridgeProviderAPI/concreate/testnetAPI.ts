@@ -1,8 +1,7 @@
-import { UpDataStructsRpcCollection } from '@unique-nft/unique-mainnet-types';
 import AbstractAPI from './abstractAPI';
 
 export class TestnetAPI extends AbstractAPI {
-  async getCollection(id): Promise<UpDataStructsRpcCollection | null> {
+  async getCollection(id): Promise<unknown> {
     const result = await this.impl.impGetCollection(id);
     return result || null;
   }

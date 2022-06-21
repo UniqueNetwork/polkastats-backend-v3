@@ -6,6 +6,11 @@ export class ImplementTestnetAPI extends ImplementorAPI {
     return ImplementorAPI.toObject(collection);
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  async impGetEffectiveCollectionLimits() {
+    return null;
+  }
+
   async impGetCollectionCount() {
     const collectionCount = await this.api.query.nft.createdCollectionCount();
     return Number(collectionCount);

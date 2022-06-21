@@ -15,7 +15,7 @@ export class BridgeAPI {
       case TypeProvider.QUARTZ:
       case TypeProvider.WESTEND:
         return new OpalAPI(new ImplementOpalAPI(this.api));
-      case TypeProvider.TESTNET2:
+      default:
         return new TestnetAPI(new ImplementTestnetAPI(this.api));
     }
   }

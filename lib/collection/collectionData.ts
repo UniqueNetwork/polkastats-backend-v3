@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
 import pino from 'pino';
-import { Option } from '@polkadot/types';
 import {
+  UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
-  UpDataStructsSponsoringRateLimit,
 } from '@unique-nft/unique-mainnet-types';
 import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
@@ -17,32 +16,34 @@ import {
 
 const logger = pino({ name: 'CollectionData', level: process.env.PINO_LOG_LEVEL || 'info' });
 
-function getSponsoredDataRate(sponsoringRateLimits: Option<UpDataStructsSponsoringRateLimit>): number {
-  if (sponsoringRateLimits.isEmpty || sponsoringRateLimits.value.isSponsoringDisabled) {
+type SponsoringRateLimits = { sponsoringDisabled?: boolean } | number | null;
+
+// todo: Find out the meaning of this option and it's possible values
+function getSponsoredDataRate(sponsoringRateLimits?: SponsoringRateLimits): number {
+  if (!Number.isNaN(Number(sponsoringRateLimits))) {
+    return Number(sponsoringRateLimits);
+  }
+
+  if (typeof sponsoringRateLimits === 'object' && sponsoringRateLimits?.sponsoringDisabled) {
     return -1;
   }
 
-  if (Number.isInteger(sponsoringRateLimits.value.asBlocks)) {
-    return Number(sponsoringRateLimits.value.asBlocks);
-  }
-
-  return null;
+  return -1;
 }
 
 /**
  * Processes raw 'limits' field value.
  */
-function processLimits(collection: UpDataStructsRpcCollection): ICollectionDbEntityFieldsetLimits {
-  const { limits: rawLimits } = collection;
-  const limits = rawLimits.toHuman();
+function processLimits(rawEffectiveCollectionLimits: UpDataStructsCollectionLimits): ICollectionDbEntityFieldsetLimits {
+  const effectiveLimits = rawEffectiveCollectionLimits.toJSON();
 
   return {
-    token_limit: Number(limits.tokenLimit) || 0,
-    limits_account_ownership: Number(limits.accountTokenOwnershipLimit) || 0,
-    limits_sponsore_data_size: Number(limits.sponsoredDataSize),
-    limits_sponsore_data_rate: getSponsoredDataRate(rawLimits.sponsoredDataRateLimit),
-    owner_can_transfer: !!limits.ownerCanTransfer,
-    owner_can_destroy: !!limits.ownerCanDestroy,
+    token_limit: Number(effectiveLimits.tokenLimit) || 0,
+    limits_account_ownership: Number(effectiveLimits.accountTokenOwnershipLimit) || 0,
+    limits_sponsore_data_size: Number(effectiveLimits.sponsoredDataSize),
+    limits_sponsore_data_rate: getSponsoredDataRate(effectiveLimits.sponsoredDataRateLimit as SponsoringRateLimits),
+    owner_can_transfer: Boolean(effectiveLimits.ownerCanTransfer),
+    owner_can_destroy: Boolean(effectiveLimits.ownerCanDestroy),
   };
 }
 
@@ -164,7 +165,11 @@ function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSch
  * Creates collection object in database suitable format
  * from raw collection object retrieved from chain api.
  */
-function formatCollectionData(collectionId: number, rawCollection: UpDataStructsRpcCollection): ICollectionDbEntity {
+function formatCollectionData(
+  collectionId: number,
+  rawCollection: UpDataStructsRpcCollection,
+  rawEffectiveCollectionLimits: UpDataStructsCollectionLimits,
+): ICollectionDbEntity {
   const owner = rawCollection.owner.toString();
   const processedProperties = processProperties(rawCollection);
 
@@ -178,7 +183,7 @@ function formatCollectionData(collectionId: number, rawCollection: UpDataStructs
     mode: JSON.stringify(rawCollection.mode),
     collection_cover: createCollectionCoverValue(processedProperties),
     ...processedProperties,
-    ...processLimits(rawCollection),
+    ...processLimits(rawEffectiveCollectionLimits),
     ...processSponsorship(rawCollection),
     ...processPermissions(rawCollection),
     ...processTokenPropertyPermissions(rawCollection),
@@ -191,7 +196,7 @@ function formatCollectionData(collectionId: number, rawCollection: UpDataStructs
  */
 export async function getFormattedCollectionById(collectionId, bridgeAPI: OpalAPI)
   : Promise<ICollectionDbEntity | null> {
-  const rawCollection = await bridgeAPI.getCollection(collectionId);
+  const { collection, effectiveCollectionLimits } = await bridgeAPI.getCollection(collectionId);
 
-  return rawCollection ? formatCollectionData(collectionId, rawCollection) : null;
+  return collection ? formatCollectionData(collectionId, collection, effectiveCollectionLimits) : null;
 }
