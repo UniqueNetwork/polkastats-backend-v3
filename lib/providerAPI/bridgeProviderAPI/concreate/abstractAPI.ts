@@ -3,7 +3,7 @@
 import ImplementorAPI from '../implement/implementorAPI';
 
 export default class AbstractAPI {
-  private readonly errorMgs = 'This method is abastract';
+  private readonly errorMgs = 'This method is abstract';
 
   constructor(public impl: ImplementorAPI) {}
 

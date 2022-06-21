@@ -19,7 +19,7 @@ const logger = pino({ name: 'CollectionData', level: process.env.PINO_LOG_LEVEL 
 type SponsoringRateLimits = { sponsoringDisabled?: boolean } | number | null;
 
 // todo: Find out the meaning of this option and it's possible values
-function getSponsoredDataRate(sponsoringRateLimits?: SponsoringRateLimits): number {
+function getSponsoredDataRate(sponsoringRateLimits: SponsoringRateLimits): number {
   if (!Number.isNaN(Number(sponsoringRateLimits))) {
     return Number(sponsoringRateLimits);
   }
