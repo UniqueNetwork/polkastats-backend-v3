@@ -1,5 +1,5 @@
 export enum SchemaVersion {
-  IMAGE_URL = 'ImageURL',
+  IMAGE_URL = 'ImageUrl',
   UNIQUE = 'Unique',
 }
 
