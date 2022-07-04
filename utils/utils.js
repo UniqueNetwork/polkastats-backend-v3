@@ -160,8 +160,7 @@ function stringifyFields(obj, fieldsToStringify) {
 
 function isNestingAddress(address) {
   return (
-    address.indexOf(NESTING_ADDRESS_PREFIX) === 0 &&
-    address.length === NESTING_ADDRESS_LENGTH
+    address.indexOf(NESTING_ADDRESS_PREFIX) === 0 && address.length === NESTING_ADDRESS_LENGTH
   );
 }
 
@@ -181,7 +180,7 @@ function getTokenIdFromNestingAddress(address) {
 
   const tokenString = address.slice(
     NESTING_ADDRESS_PREFIX.length + 8,
-    NESTING_ADDRESS_PREFIX.length + 25
+    NESTING_ADDRESS_PREFIX.length + 25,
   );
 
   return parseInt(tokenString, 16) || null;
