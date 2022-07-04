@@ -2,6 +2,7 @@
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
 import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
 import { ITokenDbEntity } from './tokenDbEntity.interface';
+import { NESTING_ADDRESS_PREFIX, NESTING_ADDRESS_LENGTH } from '../../constants';
 
 const TOKEN_FIELDS = [
   'token_id',
@@ -13,10 +14,8 @@ const TOKEN_FIELDS = [
   'parent_id',
 ];
 
-const NESTING_ADDRESS_PREFIX = '0xf8238ccfff8ed887463fd5e0';
-
 function isNestingAddress(address: string): boolean {
-  return address.indexOf(NESTING_ADDRESS_PREFIX) === 0 && address.length === 42;
+  return address.indexOf(NESTING_ADDRESS_PREFIX) === 0 && address.length === NESTING_ADDRESS_LENGTH;
 }
 
 function getTokenIdFromNestingAddress(address: string): number | null {
