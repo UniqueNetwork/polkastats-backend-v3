@@ -1,8 +1,13 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
-import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
+import {
+  getCollectionIdFromNestingAddress,
+  getTokenIdFromNestingAddress,
+  isNestingAddress,
+  normalizeSubstrateAddress,
+  stringifyFields,
+} from '../../utils/utils';
 import { ITokenDbEntity } from './tokenDbEntity.interface';
-import { NESTING_ADDRESS_PREFIX, NESTING_ADDRESS_LENGTH } from '../../constants';
 
 const TOKEN_FIELDS = [
   'token_id',
@@ -14,27 +19,15 @@ const TOKEN_FIELDS = [
   'parent_id',
 ];
 
-function isNestingAddress(address: string): boolean {
-  return address.indexOf(NESTING_ADDRESS_PREFIX) === 0 && address.length === NESTING_ADDRESS_LENGTH;
-}
-
-function getTokenIdFromNestingAddress(address: string): number | null {
-  if (!isNestingAddress(address)) return null;
-
-  const tokenString = address.slice(
-    NESTING_ADDRESS_PREFIX.length + 8,
-    NESTING_ADDRESS_PREFIX.length + 25,
-  );
-
-  return parseInt(tokenString, 16) || null;
-}
-
 function prepareQueryReplacements(token: ITokenDbEntity) {
   const { owner, date_of_creation } = token;
-  let parent_id: null | number = null;
+  let parent_id: null | string = null;
 
   if (isNestingAddress(owner)) {
-    parent_id = getTokenIdFromNestingAddress(owner);
+    const tokenId = getTokenIdFromNestingAddress(owner);
+    const collectionId = getCollectionIdFromNestingAddress(owner);
+
+    parent_id = collectionId && tokenId ? `${collectionId}_${tokenId}` : null;
   }
 
   return {
@@ -76,7 +69,7 @@ export async function get({
 
   return sequelize.query(
     `SELECT ${selectList.join(',')} FROM tokens WHERE ${qWhere}`,
-    qOptions,
+    qOptions
   );
 }
 
@@ -110,7 +103,7 @@ export async function save({
         ...prepareQueryReplacements(token),
       },
       transaction,
-    },
+    }
   );
 }
 
@@ -134,6 +127,6 @@ export async function del({
         collectionId,
       },
       transaction,
-    },
+    }
   );
 }

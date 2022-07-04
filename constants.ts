@@ -20,3 +20,7 @@ export enum EventSection {
   BALANCES = 'balances',
   TREASURY = 'treasury',
 }
+
+export const NESTING_ADDRESS_PREFIX = '0xf8238ccfff8ed887463fd5e0';
+
+export const NESTING_ADDRESS_LENGTH = 42;

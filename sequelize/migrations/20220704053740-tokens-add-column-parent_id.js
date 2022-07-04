@@ -4,9 +4,8 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      
       await queryInterface.addColumn('tokens', 'parent_id', {
-        type: Sequelize.DataTypes.BIGINT,
+        type: Sequelize.DataTypes.TEXT,
         defaultValue: null,
         allowNull: true
       }, {
