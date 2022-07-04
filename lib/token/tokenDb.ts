@@ -27,7 +27,7 @@ function getTokenIdFromNestingAddress(address: string): number | null {
     NESTING_ADDRESS_PREFIX.length + 25,
   );
 
-  return parseInt(tokenString, 16);
+  return parseInt(tokenString, 16) || null;
 }
 
 function prepareQueryReplacements(token: ITokenDbEntity) {

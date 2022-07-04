@@ -39,7 +39,7 @@ export class BlockListener {
     await this.bridgeApi.api.rpc.chain.subscribeNewHeads(async (header) => {
       const blockNumber = header.number.toNumber();
       this.logger.debug(
-        `New block received #${blockNumber} has hash ${header.hash}`
+        `New block received #${blockNumber} has hash ${header.hash}`,
       );
       await this.blockProcessing(blockNumber);
     });
@@ -73,7 +73,7 @@ export class BlockListener {
         events,
         blockNumber,
         timestamp,
-        transaction
+        transaction,
       );
 
       await extrinsic.save({
