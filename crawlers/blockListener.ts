@@ -8,7 +8,10 @@ import extrinsic from '../lib/extrinsic/extrinsics';
 import eventsDB from '../lib/events/eventsDB';
 import blockDB from '../lib/block/blockDB';
 import { get as getBlockData } from '../lib/block/blockData';
-import { get as getEventsData, parseRecord as parseEventRecord } from '../lib/events/eventsData';
+import {
+  get as getEventsData,
+  parseRecord as parseEventRecord,
+} from '../lib/events/eventsData';
 import { EventFacade } from './eventFacade';
 import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 import { EventSection } from '../constants';
@@ -25,10 +28,7 @@ export class BlockListener {
 
   private eventFacade: EventFacade;
 
-  constructor(
-    protected api: ApiPromise,
-    protected sequelize: Sequelize,
-  ) {
+  constructor(protected api: ApiPromise, protected sequelize: Sequelize) {
     this.logger = pino(loggerOptions);
     this.bridgeApi = new BridgeAPI(api).bridgeAPI;
     this.eventFacade = new EventFacade(this.bridgeApi, this.sequelize);
@@ -38,7 +38,9 @@ export class BlockListener {
     this.logger.info('Crawler started');
     await this.bridgeApi.api.rpc.chain.subscribeNewHeads(async (header) => {
       const blockNumber = header.number.toNumber();
-      this.logger.debug(`New block received #${blockNumber} has hash ${header.hash}`);
+      this.logger.debug(
+        `New block received #${blockNumber} has hash ${header.hash}`,
+      );
       await this.blockProcessing(blockNumber);
     });
   }
@@ -51,8 +53,12 @@ export class BlockListener {
       blockHash: blockData.blockHash,
     });
 
-    const timestamp = blockData.timestamp ? Math.floor(blockData.timestamp / 1000) : 0;
-    const sessionLength = (this.bridgeApi.api.consts?.babe?.epochDuration || 0).toString();
+    const timestamp = blockData.timestamp
+      ? Math.floor(blockData.timestamp / 1000)
+      : 0;
+    const sessionLength = (
+      this.bridgeApi.api.consts?.babe?.epochDuration || 0
+    ).toString();
 
     const transaction = await this.sequelize.transaction();
     try {
@@ -63,7 +69,12 @@ export class BlockListener {
         transaction,
       });
 
-      const parsedEvents = await this.saveEvents(events, blockNumber, timestamp, transaction);
+      const parsedEvents = await this.saveEvents(
+        events,
+        blockNumber,
+        timestamp,
+        transaction,
+      );
 
       await extrinsic.save({
         sequelize: this.sequelize,
@@ -86,7 +97,7 @@ export class BlockListener {
     events: any,
     blockNumber: number,
     timestamp: number,
-    transaction: Transaction,
+    transaction: Transaction
   ): Promise<Object[]> {
     const parsedEvents = [];
 
@@ -99,12 +110,7 @@ export class BlockListener {
         ...parseEventRecord({ ...event, blockNumber }),
       };
 
-      const {
-        section,
-        method,
-        amount,
-        extrinsicIndex,
-      } = preEvent;
+      const { section, method, amount, extrinsicIndex } = preEvent;
 
       parsedEvents.push({
         blockNumber,
@@ -115,10 +121,14 @@ export class BlockListener {
       });
 
       // eslint-disable-next-line no-await-in-loop
-      await eventsDB.save({ event: preEvent, sequelize: this.sequelize, transaction });
+      await eventsDB.save({
+        event: preEvent,
+        sequelize: this.sequelize,
+        transaction,
+      });
 
       this.logger.info(
-        `Added event #${blockNumber}-${eventIndex} ${section} ➡ ${method}`,
+        `Added event #${blockNumber}-${eventIndex} ${section} ➡ ${method}`
       );
 
       if (section !== EventSection.BALANCES) {

@@ -1,7 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { encodeAddress, decodeAddress } = require('@polkadot/util-crypto');
 const BigNumber = require('bignumber.js');
-const { EventSection, EventMethod } = require('../constants');
+const {
+  EventSection,
+  EventMethod,
+  NESTING_ADDRESS_PREFIX,
+  NESTING_ADDRESS_LENGTH,
+} = require('../constants');
 
 const ETHEREUM_ADDRESS_MAX_LENGTH = 42;
 
@@ -153,6 +158,34 @@ function stringifyFields(obj, fieldsToStringify) {
   );
 }
 
+function isNestingAddress(address) {
+  return (
+    address.indexOf(NESTING_ADDRESS_PREFIX) === 0 && address.length === NESTING_ADDRESS_LENGTH
+  );
+}
+
+function getCollectionIdFromNestingAddress(address) {
+  if (!isNestingAddress(address)) return null;
+
+  const collectionString = address.slice(
+    NESTING_ADDRESS_PREFIX.length,
+    NESTING_ADDRESS_PREFIX.length + 8,
+  );
+
+  return parseInt(collectionString, 16) || null;
+}
+
+function getTokenIdFromNestingAddress(address) {
+  if (!isNestingAddress(address)) return null;
+
+  const tokenString = address.slice(
+    NESTING_ADDRESS_PREFIX.length + 8,
+    NESTING_ADDRESS_PREFIX.length + 25,
+  );
+
+  return parseInt(tokenString, 16) || null;
+}
+
 module.exports = {
   formatNumber,
   shortHash,
@@ -170,4 +203,7 @@ module.exports = {
   capitalizeFirstLetter,
   capitalizeAndMapObject,
   stringifyFields,
+  isNestingAddress,
+  getCollectionIdFromNestingAddress,
+  getTokenIdFromNestingAddress,
 };

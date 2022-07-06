@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { QueryTypes, Sequelize, Transaction } from 'sequelize';
-import { normalizeSubstrateAddress, stringifyFields } from '../../utils/utils';
+import {
+  getCollectionIdFromNestingAddress,
+  getTokenIdFromNestingAddress,
+  isNestingAddress,
+  normalizeSubstrateAddress,
+  stringifyFields,
+} from '../../utils/utils';
 import { ITokenDbEntity } from './tokenDbEntity.interface';
 
 const TOKEN_FIELDS = [
@@ -10,16 +16,26 @@ const TOKEN_FIELDS = [
   'owner_normalized',
   'data',
   'date_of_creation',
+  'parent_id',
 ];
 
 function prepareQueryReplacements(token: ITokenDbEntity) {
   const { owner, date_of_creation } = token;
+  let parent_id: null | string = null;
+
+  if (isNestingAddress(owner)) {
+    const tokenId = getTokenIdFromNestingAddress(owner);
+    const collectionId = getCollectionIdFromNestingAddress(owner);
+
+    parent_id = collectionId && tokenId ? `${collectionId}_${tokenId}` : null;
+  }
 
   return {
     ...token,
     ...stringifyFields(token, ['data']),
     owner_normalized: normalizeSubstrateAddress(owner),
     date_of_creation: date_of_creation || null,
+    parent_id,
   };
 }
 
@@ -28,11 +44,11 @@ export async function get({
   tokenId,
   sequelize,
   selectList = ['owner', 'data'],
-} : {
-  collectionId: number,
-  tokenId: number,
-  sequelize: Sequelize,
-  selectList?: string[],
+}: {
+  collectionId: number;
+  tokenId: number;
+  sequelize: Sequelize;
+  selectList?: string[];
 }): Promise<Object | null> {
   let qWhere = 'collection_id = :collectionId ';
 
@@ -53,7 +69,7 @@ export async function get({
 
   return sequelize.query(
     `SELECT ${selectList.join(',')} FROM tokens WHERE ${qWhere}`,
-    qOptions,
+    qOptions
   );
 }
 
@@ -62,15 +78,17 @@ export async function save({
   sequelize,
   transaction = null,
   excludeFields = [],
-} : {
-  token: ITokenDbEntity,
-  sequelize: Sequelize,
-  transaction?: Transaction,
-  excludeFields?: string[]
+}: {
+  token: ITokenDbEntity;
+  sequelize: Sequelize;
+  transaction?: Transaction;
+  excludeFields?: string[];
 }) {
   const fields = TOKEN_FIELDS;
   const queryFields = fields.filter((field) => !excludeFields.includes(field));
-  const updateFields = queryFields.map((item) => `${item} = :${item}`).join(',');
+  const updateFields = queryFields
+    .map((item) => `${item} = :${item}`)
+    .join(',');
   const values = queryFields.map((item) => `:${item}`).join(',');
   await sequelize.query(
     `
@@ -85,7 +103,7 @@ export async function save({
         ...prepareQueryReplacements(token),
       },
       transaction,
-    },
+    }
   );
 }
 
@@ -94,11 +112,11 @@ export async function del({
   collectionId,
   sequelize,
   transaction = null,
-} : {
-  tokenId: number,
-  collectionId: number,
-  sequelize: Sequelize,
-  transaction?: Transaction
+}: {
+  tokenId: number;
+  collectionId: number;
+  sequelize: Sequelize;
+  transaction?: Transaction;
 }) {
   await sequelize.query(
     'DELETE FROM tokens WHERE token_id =:tokenId and collection_id = :collectionId',
@@ -109,6 +127,6 @@ export async function del({
         collectionId,
       },
       transaction,
-    },
+    }
   );
 }

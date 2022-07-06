@@ -13,9 +13,7 @@ export class EventFacade {
     this.sequelize = sequelize;
   }
 
-  async save({
-    type, data, timestamp, transaction,
-  }) {
+  async save({ type, data, timestamp, transaction }) {
     const event = new EventFactory(
       this.bridgeAPI,
       this.sequelize,
@@ -23,6 +21,7 @@ export class EventFacade {
       type,
       timestamp,
     );
+
     await event.save(transaction);
   }
 }
