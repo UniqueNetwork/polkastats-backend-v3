@@ -4,7 +4,7 @@ import pino from 'pino';
 import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
-} from '@unique-nft/unique-mainnet-types';
+} from '@unique-nft/quartz-mainnet-types';
 import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
