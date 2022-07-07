@@ -1,8 +1,8 @@
 /* eslint-disable max-classes-per-file */
-/// <reference types="@unique-nft/unique-mainnet-types/augment-api-rpc" />
+/// <reference types="@unique-nft/quartz-mainnet-types/augment-api-rpc" />
 import { ApiPromise } from '@polkadot/api';
 import { WsProvider } from '@polkadot/rpc-provider';
-import { unique } from '@unique-nft/unique-mainnet-types/definitions';
+import { unique } from '@unique-nft/quartz-mainnet-types/definitions';
 import { TypeProvider } from './type/provider';
 
 class ProviderAPI {

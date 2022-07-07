@@ -1,34 +1,28 @@
 {
-    "env": {
-        "node": true,
-        "es2021": true
-    },
-    "extends": [
-        "airbnb-base",
-        "airbnb-typescript/base"
+  "env": {
+    "node": true,
+    "es2021": true
+  },
+  "extends": ["airbnb-base", "airbnb-typescript/base"],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "project": "./tsconfig.json"
+  },
+  "plugins": ["@typescript-eslint"],
+  "rules": {
+    "radix": ["error", "as-needed"],
+    "no-plusplus": "off",
+    "no-await-in-loop": "off",
+    "max-len": [
+      "error",
+      {
+        "code": 120
+      }
     ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "project": "./tsconfig.json"
-    },
-    "plugins": [
-        "@typescript-eslint"
-    ],
-    "rules": {
-        "radix": [
-            "error",
-            "as-needed"
-        ],
-        "no-plusplus": "off",
-        "no-await-in-loop": "off",
-        "max-len": [
-            "error",
-            {
-                "code": 120
-            }
-        ],
-        "import/prefer-default-export": "off"
-    }
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/comma-dangle": "off",
+    "object-curly-newline": "off"
+  }
 }

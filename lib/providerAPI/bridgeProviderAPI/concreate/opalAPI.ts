@@ -1,4 +1,4 @@
-import { UpDataStructsCollectionLimits, UpDataStructsRpcCollection } from '@unique-nft/unique-mainnet-types';
+import { UpDataStructsCollectionLimits, UpDataStructsRpcCollection } from '@unique-nft/quartz-mainnet-types';
 import { ImplementOpalAPI } from '../implement/implementOpalAPI';
 import AbstractAPI from './abstractAPI';
 

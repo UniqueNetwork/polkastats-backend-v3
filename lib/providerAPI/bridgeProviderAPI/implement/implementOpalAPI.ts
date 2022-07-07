@@ -2,7 +2,7 @@ import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
   UpDataStructsTokenData,
-} from '@unique-nft/unique-mainnet-types';
+} from '@unique-nft/quartz-mainnet-types';
 import ImplementorAPI from './implementorAPI';
 
 export class ImplementOpalAPI extends ImplementorAPI {

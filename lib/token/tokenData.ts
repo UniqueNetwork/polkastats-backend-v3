@@ -1,6 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
-import { UpDataStructsTokenData } from '@unique-nft/unique-mainnet-types';
+import { UpDataStructsTokenData } from '@unique-nft/quartz-mainnet-types';
 import { normalizeSubstrateAddress } from '../../utils/utils';
 import protobuf from '../../utils/protobuf';
 import { ITokenDbEntity } from './tokenDbEntity.interface';
