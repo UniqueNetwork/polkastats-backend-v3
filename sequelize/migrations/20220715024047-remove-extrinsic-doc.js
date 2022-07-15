@@ -8,7 +8,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.addColumn('extrinsic', 'doc', {
       type: Sequelize.DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     });
   },
 };
