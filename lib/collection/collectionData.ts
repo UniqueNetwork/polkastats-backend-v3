@@ -79,11 +79,22 @@ function processProperties(collection: UpDataStructsRpcCollection)
     const strValue = value.toUtf8();
     let processedValue = null;
 
-    if (strValue && ['_old_constOnChainSchema', '_old_variableOnChainSchema'].includes(strKey)) {
+    if (strValue && [
+      '_old_constOnChainSchema',
+      '_old_variableOnChainSchema',
+      'coverPicture.ipfsCid'
+    ].includes(strKey)) {
       try { processedValue = JSON.parse(strValue); } catch (err) { /* */ }
     }
     properties[strKey] = processedValue || strValue;
   });
+
+  if (properties['coverPicture.ipfsCid']) {
+    const collectionCover = properties['coverPicture.ipfsCid'];
+    properties._old_variableOnChainSchema = typeof properties._old_variableOnChainSchema === 'object'
+      ? { ...(properties._old_variableOnChainSchema), collectionCover }
+      : { collectionCover };
+  }
 
   return {
     offchain_schema: properties._old_offchainSchema || null,
