@@ -85,6 +85,13 @@ function processProperties(collection: UpDataStructsRpcCollection)
     properties[strKey] = processedValue || strValue;
   });
 
+  if (properties['coverPicture.ipfsCid']) {
+    const collectionCover = properties['coverPicture.ipfsCid'];
+    properties._old_variableOnChainSchema = typeof properties._old_variableOnChainSchema === 'object'
+      ? { ...(properties._old_variableOnChainSchema), collectionCover }
+      : { collectionCover };
+  }
+
   return {
     offchain_schema: properties._old_offchainSchema || null,
     const_chain_schema: properties._old_constOnChainSchema || null,
