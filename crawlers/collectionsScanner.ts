@@ -48,7 +48,7 @@ class CollectionsScanner {
       failed: 0,
     };
 
-    for (let collectionId = 368; collectionId <= collectionsCount; collectionId++) {
+    for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
       const collection = await getFormattedCollectionById(collectionId, this.bridgeApi);
 
       try {
