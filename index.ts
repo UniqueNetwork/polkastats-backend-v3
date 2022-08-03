@@ -40,7 +40,10 @@ async function getSequlize(sConnect) {
 async function getPolkadotAPI(wsUrl, rtt) {
   log.info(`Connecting to ${wsUrl}`);
   const provider = new ProviderFactory(wsUrl, typeProvider);
+
   const api = await provider.getApi(rtt);
+
+  const sdk = await provider.getSdk();
 
   api.on('error', async (value) => {
     log.error(value);
@@ -74,19 +77,24 @@ async function getPolkadotAPI(wsUrl, rtt) {
   if (node && node.isSyncing.eq(false)) {
     // Node is synced!
     log.info('Node is synced!');
-    return api;
+  } else {
+    log.default('Node is not synced! Waiting 10s...');
+    api.disconnect();
+    await wait(10000);
   }
-  log.default('Node is not synced! Waiting 10s...');
-  api.disconnect();
-  await wait(10000);
 
-  return api;
+  return { api, sdk };
 }
 
 async function main() {
   const sequelize = await getSequlize(dbConnect);
-  const api = await getPolkadotAPI(wsProviderUrl, runtimeTypes);
-  const blockExplorer = new BlockExplorer(api, sequelize, crawlers);
+  const { api, sdk } = await getPolkadotAPI(wsProviderUrl, runtimeTypes);
+  const blockExplorer = new BlockExplorer(
+    api,
+    sdk,
+    sequelize,
+    crawlers
+  );
   await blockExplorer.run();
 
   startServer(() => {

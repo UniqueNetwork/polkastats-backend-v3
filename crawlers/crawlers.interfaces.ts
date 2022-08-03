@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { Sdk } from '@unique-nft/sdk';
 import { Sequelize } from 'sequelize/types';
 
 export interface ICrawlerModuleConfig {
@@ -8,6 +9,7 @@ export interface ICrawlerModuleConfig {
 
 export interface ICrawlerModuleConstructorArgs {
   api: ApiPromise;
+  sdk: Sdk;
   sequelize: Sequelize;
   config: ICrawlerModuleConfig;
 }

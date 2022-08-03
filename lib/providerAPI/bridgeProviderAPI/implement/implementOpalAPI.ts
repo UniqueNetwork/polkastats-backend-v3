@@ -1,8 +1,11 @@
+/* eslint-disable import/no-duplicates */
 import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
   UpDataStructsTokenData,
 } from '@unique-nft/unique-mainnet-types';
+import { CollectionInfoWithSchema } from '@unique-nft/sdk/tokens';
+import '@unique-nft/sdk/tokens'; // need this to get sdk.collections
 import ImplementorAPI from './implementorAPI';
 
 export class ImplementOpalAPI extends ImplementorAPI {
@@ -14,6 +17,12 @@ export class ImplementOpalAPI extends ImplementorAPI {
   async impGetEffectiveCollectionLimits(collectionId): Promise<UpDataStructsCollectionLimits | null> {
     const result = await this.api.rpc.unique.effectiveCollectionLimits(collectionId);
     return result.isSome ? result.value : null;
+  }
+
+  async impGetCollectionSdk(collectionId): Promise<CollectionInfoWithSchema | null> {
+    const result = await this.sdk.collections.get_new({ collectionId });
+
+    return result;
   }
 
   async impGetCollectionCount() {

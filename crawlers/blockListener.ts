@@ -1,6 +1,7 @@
 import { Logger, pino } from 'pino';
 import { ApiPromise } from '@polkadot/api';
 import { Sequelize, Transaction } from 'sequelize/types';
+import { Sdk } from '@unique-nft/sdk';
 import { OpalAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import { TestnetAPI } from '../lib/providerAPI/bridgeProviderAPI/concreate/testnetAPI';
 import { BridgeAPI } from '../lib/providerAPI/bridgeApi';
@@ -28,9 +29,9 @@ export class BlockListener {
 
   private eventFacade: EventFacade;
 
-  constructor(protected api: ApiPromise, protected sequelize: Sequelize) {
+  constructor(protected api: ApiPromise, protected sdk: Sdk, protected sequelize: Sequelize) {
     this.logger = pino(loggerOptions);
-    this.bridgeApi = new BridgeAPI(api).bridgeAPI;
+    this.bridgeApi = new BridgeAPI(api, sdk).bridgeAPI;
     this.eventFacade = new EventFacade(this.bridgeApi, this.sequelize);
   }
 
@@ -110,7 +111,9 @@ export class BlockListener {
         ...parseEventRecord({ ...event, blockNumber }),
       };
 
-      const { section, method, amount, extrinsicIndex } = preEvent;
+      const {
+        section, method, amount, extrinsicIndex
+      } = preEvent;
 
       parsedEvents.push({
         blockNumber,
@@ -153,7 +156,7 @@ export class BlockListener {
   }
 }
 
-export async function start({ api, sequelize }: ICrawlerModuleConstructorArgs) {
-  const blockListener = new BlockListener(api, sequelize);
+export async function start({ api, sdk, sequelize }: ICrawlerModuleConstructorArgs) {
+  const blockListener = new BlockListener(api, sdk, sequelize);
   await blockListener.startBlockListening();
 }

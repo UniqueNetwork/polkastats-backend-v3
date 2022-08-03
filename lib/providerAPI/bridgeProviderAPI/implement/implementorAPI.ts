@@ -1,7 +1,8 @@
 import { ApiPromise } from '@polkadot/api';
+import { Sdk } from '@unique-nft/sdk';
 
 export default abstract class ImplementorAPI {
-  constructor(public api: ApiPromise) {}
+  constructor(public api: ApiPromise, public sdk: Sdk) {}
 
   abstract impGetCollection(collectionId): Promise<unknown>;
 

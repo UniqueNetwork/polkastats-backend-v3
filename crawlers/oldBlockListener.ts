@@ -45,15 +45,16 @@ class OldBlockListener extends BlockListener {
 
     this.logger.info(`Repair block gaps for: ${JSON.stringify(blocksGap)}`);
 
-    for (let blockNumber = blocksGap.gapStart; blockNumber <= blocksGap.gapEnd; blockNumber++) {
+    for (let blockNumber = gapStart; blockNumber <= gapEnd; blockNumber++) {
       await this.blockProcessing(blockNumber);
     }
   }
 }
 
-export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
-  const blockListener = new OldBlockListener(api, sequelize);
+export async function start({ api, sdk, sequelize }: ICrawlerModuleConstructorArgs) {
+  const blockListener = new OldBlockListener(api, sdk, sequelize);
   const blocksGaps = await blockListener.getBlocksGaps();
+  // eslint-disable-next-line no-restricted-syntax
   for (const blockGap of blocksGaps) {
     await blockListener.scanRangeOfBlocks(blockGap);
   }

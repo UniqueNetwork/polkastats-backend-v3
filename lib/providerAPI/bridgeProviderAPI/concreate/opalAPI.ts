@@ -14,6 +14,7 @@ export class OpalAPI extends AbstractAPI {
     const [collection, effectiveCollectionLimits] = await Promise.all([
       this.impl.impGetCollection(id),
       this.impl.impGetEffectiveCollectionLimits(id),
+      this.impl.impGetCollectionSdk(id)
     ]);
 
     return {

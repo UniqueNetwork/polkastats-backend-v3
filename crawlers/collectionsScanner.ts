@@ -80,10 +80,12 @@ class CollectionsScanner {
     setTimeout(() => this.run(pollingTime), pollingTime);
   }
 
-  async start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
+  async start({
+    api, sdk, sequelize, config
+  }: ICrawlerModuleConstructorArgs) {
     this.sequelize = sequelize;
 
-    const { bridgeAPI } = new BridgeAPI(api);
+    const { bridgeAPI } = new BridgeAPI(api, sdk);
 
     this.bridgeApi = bridgeAPI as OpalAPI;
 
