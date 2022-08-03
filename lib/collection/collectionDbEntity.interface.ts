@@ -25,10 +25,12 @@ export interface ICollectionDbEntity extends ICollectionDbEntityFieldsetLimits, 
   mode?: string,
   mint_mode?: boolean,
 
-  properties: Object | null,
+  properties: string | null,
   permissions: Object | null,
   token_property_permissions: Object | null,
 
   date_of_creation?: number,
-  collection_cover?: string
+  collection_cover?: string,
+
+  attributes_schema: string | null
 }

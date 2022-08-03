@@ -5,7 +5,7 @@ module.exports = {
     return Promise.all([
       queryInterface.addColumn('collections', 'properties', {
         type: Sequelize.DataTypes.JSONB,
-        defaultValue: {}  
+        defaultValue: []  
       }),
       queryInterface.addColumn('collections', 'attributes_schema', {
         type: Sequelize.DataTypes.JSONB,

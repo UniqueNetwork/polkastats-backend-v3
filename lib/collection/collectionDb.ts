@@ -27,6 +27,8 @@ const COLLECTION_FIELDS = [
   'mint_mode',
   'date_of_creation',
   'collection_cover',
+  'properties',
+  'attributes_schema'
 ];
 
 function prepareQueryReplacements(collection: ICollectionDbEntity) {
