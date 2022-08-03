@@ -51,8 +51,6 @@ class CollectionsScanner {
     for (let collectionId = 1; collectionId <= collectionsCount; collectionId++) {
       const collection = await getFormattedCollectionById(collectionId, this.bridgeApi);
 
-      // console.log(collection);
-
       try {
         if (collection) {
           await this.saveCollection(collection);
