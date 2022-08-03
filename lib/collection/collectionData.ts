@@ -194,8 +194,6 @@ function formatCollectionData(
 
   const { properties = [], schema: { attributesSchema = {} } = {} } = collectionSdk;
 
-  // console.log(properties, attributesSchema);
-
   return {
     collection_id: collectionId,
     owner,
