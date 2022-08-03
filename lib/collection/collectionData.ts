@@ -5,6 +5,7 @@ import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
 } from '@unique-nft/unique-mainnet-types';
+import { CollectionInfoWithSchema } from '@unique-nft/sdk/tokens';
 import { SchemaVersion } from '../../constants';
 import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
@@ -177,12 +178,24 @@ function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSch
  * from raw collection object retrieved from chain api.
  */
 function formatCollectionData(
-  collectionId: number,
-  rawCollection: UpDataStructsRpcCollection,
-  rawEffectiveCollectionLimits: UpDataStructsCollectionLimits,
+  {
+    collectionId,
+    rawCollection,
+    collectionSdk,
+    rawEffectiveCollectionLimits
+  } :
+  { collectionId: number,
+    rawCollection: UpDataStructsRpcCollection,
+    collectionSdk: CollectionInfoWithSchema,
+    rawEffectiveCollectionLimits: UpDataStructsCollectionLimits
+  }
 ): ICollectionDbEntity {
   const owner = rawCollection.owner.toString();
   const processedProperties = processProperties(rawCollection);
+
+  const { properties, schema: { attributesSchema = null } = {} } = collectionSdk;
+
+  console.log(properties, attributesSchema);
 
   return {
     collection_id: collectionId,
@@ -207,7 +220,12 @@ function formatCollectionData(
  */
 export async function getFormattedCollectionById(collectionId, bridgeAPI: OpalAPI)
   : Promise<ICollectionDbEntity | null> {
-  const { collection, effectiveCollectionLimits } = await bridgeAPI.getCollection(collectionId);
+  const { collection, effectiveCollectionLimits, collectionSdk } = await bridgeAPI.getCollection(collectionId);
 
-  return collection ? formatCollectionData(collectionId, collection, effectiveCollectionLimits) : null;
+  return collection ? formatCollectionData({
+    collectionId,
+    collection,
+    collectionSdk,
+    effectiveCollectionLimits
+  }) : null;
 }
