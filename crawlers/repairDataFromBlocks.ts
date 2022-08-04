@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { Sdk } from '@unique-nft/sdk';
 import { Sequelize } from 'sequelize/types';
 import blockDB from '../lib/block/blockDB';
 import { BlockListener } from './blockListener';
@@ -7,10 +8,11 @@ import { ICrawlerModuleConstructorArgs } from './crawlers.interfaces';
 class Rescanner extends BlockListener {
   constructor(
     protected api: ApiPromise,
+    protected sdk: Sdk,
     protected sequelize: Sequelize,
     readonly COUNT_OF_BLOCKS: number,
   ) {
-    super(api, sequelize);
+    super(api, sdk, sequelize);
   }
 
   private async getBlocks(): Promise<any[]> {
@@ -32,7 +34,9 @@ class Rescanner extends BlockListener {
   }
 }
 
-export async function start({ api, sequelize, config }: ICrawlerModuleConstructorArgs) {
-  const rescanner = new Rescanner(api, sequelize, config.countOfParallelTasks);
+export async function start({
+  api, sdk, sequelize, config
+}: ICrawlerModuleConstructorArgs) {
+  const rescanner = new Rescanner(api, sdk, sequelize, config.countOfParallelTasks);
   await rescanner.rescan();
 }

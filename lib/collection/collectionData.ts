@@ -5,8 +5,9 @@ import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
 } from '@unique-nft/unique-mainnet-types';
+import { CollectionInfoWithSchema } from '@unique-nft/sdk/tokens';
 import { SchemaVersion } from '../../constants';
-import { avoidUseBuffer, normalizeSubstrateAddress } from '../../utils/utils';
+import { avoidUseBuffer, normalizeSubstrateAddress, sanitizeUnicodeString } from '../../utils/utils';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
 import {
   ICollectionDbEntity,
@@ -62,8 +63,8 @@ function processSponsorship(collection: UpDataStructsRpcCollection): { sponsorsh
 /**
  * Processes raw 'properties' field value.
  */
-function processProperties(collection: UpDataStructsRpcCollection)
-  : ICollectionDbEntityFieldsetSchema & { properties: Object } {
+function processOldProperties(collection: UpDataStructsRpcCollection)
+  : ICollectionDbEntityFieldsetSchema {
   const { properties: rawProperties } = collection;
 
   // For now we should have the exact set of '_old_*' properties.
@@ -101,7 +102,6 @@ function processProperties(collection: UpDataStructsRpcCollection)
     const_chain_schema: properties._old_constOnChainSchema || null,
     variable_on_chain_schema: properties._old_variableOnChainSchema || null,
     schema_version: properties._old_schemaVersion || null,
-    properties,
   };
 }
 
@@ -177,12 +177,22 @@ function createCollectionCoverValue(schemaFields: ICollectionDbEntityFieldsetSch
  * from raw collection object retrieved from chain api.
  */
 function formatCollectionData(
-  collectionId: number,
-  rawCollection: UpDataStructsRpcCollection,
-  rawEffectiveCollectionLimits: UpDataStructsCollectionLimits,
+  {
+    collectionId,
+    collection: rawCollection,
+    collectionSdk,
+    effectiveCollectionLimits: rawEffectiveCollectionLimits
+  } :
+  { collectionId: number,
+    collection: UpDataStructsRpcCollection,
+    collectionSdk: CollectionInfoWithSchema,
+    effectiveCollectionLimits: UpDataStructsCollectionLimits
+  }
 ): ICollectionDbEntity {
   const owner = rawCollection.owner.toString();
-  const processedProperties = processProperties(rawCollection);
+  const processedOldProperties = processOldProperties(rawCollection);
+
+  const { properties = [], schema: { attributesSchema = {} } = {} } = collectionSdk;
 
   return {
     collection_id: collectionId,
@@ -192,8 +202,10 @@ function formatCollectionData(
     description: avoidUseBuffer(rawCollection.description),
     token_prefix: rawCollection.tokenPrefix.toUtf8(),
     mode: JSON.stringify(rawCollection.mode),
-    collection_cover: createCollectionCoverValue(processedProperties),
-    ...processedProperties,
+    collection_cover: createCollectionCoverValue(processedOldProperties),
+    properties: sanitizeUnicodeString(JSON.stringify(properties)),
+    attributes_schema: sanitizeUnicodeString(JSON.stringify(attributesSchema)),
+    ...processedOldProperties,
     ...processLimits(rawEffectiveCollectionLimits),
     ...processSponsorship(rawCollection),
     ...processPermissions(rawCollection),
@@ -207,7 +219,12 @@ function formatCollectionData(
  */
 export async function getFormattedCollectionById(collectionId, bridgeAPI: OpalAPI)
   : Promise<ICollectionDbEntity | null> {
-  const { collection, effectiveCollectionLimits } = await bridgeAPI.getCollection(collectionId);
+  const { collection, effectiveCollectionLimits, collectionSdk } = await bridgeAPI.getCollection(collectionId);
 
-  return collection ? formatCollectionData(collectionId, collection, effectiveCollectionLimits) : null;
+  return collection ? formatCollectionData({
+    collectionId,
+    collection,
+    collectionSdk,
+    effectiveCollectionLimits
+  }) : null;
 }

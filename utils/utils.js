@@ -186,6 +186,10 @@ function getTokenIdFromNestingAddress(address) {
   return parseInt(tokenString, 16) || null;
 }
 
+function sanitizeUnicodeString(str) {
+  return str.replace(/\\u0000/g, '');
+}
+
 module.exports = {
   formatNumber,
   shortHash,
@@ -206,4 +210,5 @@ module.exports = {
   isNestingAddress,
   getCollectionIdFromNestingAddress,
   getTokenIdFromNestingAddress,
+  sanitizeUnicodeString
 };

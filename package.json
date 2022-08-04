@@ -44,6 +44,7 @@
     "@polkadot/rpc-provider": "^8.9.1",
     "@polkadot/types": "^8.6.2",
     "@polkadot/util": "^9.3.1",
+    "@unique-nft/sdk": "^0.4.25",
     "@unique-nft/unique-mainnet-types": "^0.6.1",
     "bignumber.js": "^9.0.2",
     "chalk": "^4.1.2",
