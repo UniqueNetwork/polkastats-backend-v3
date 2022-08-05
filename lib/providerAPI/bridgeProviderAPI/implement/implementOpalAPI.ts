@@ -4,7 +4,7 @@ import {
   UpDataStructsRpcCollection
 } from '@unique-nft/unique-mainnet-types';
 import { CollectionInfoWithSchema, TokenPropertiesResult, UniqueTokenDecoded } from '@unique-nft/sdk/tokens';
-import '@unique-nft/sdk/tokens'; // need this to get sdk.collections
+import '@unique-nft/sdk/tokens'; // need this to get sdk.collections and sdk.tokens declarations
 import ImplementorAPI from './implementorAPI';
 
 export class ImplementOpalAPI extends ImplementorAPI {
