@@ -2,10 +2,10 @@
 import {
   UpDataStructsCollectionLimits,
   UpDataStructsRpcCollection,
-  UpDataStructsTokenData,
+  UpDataStructsTokenData
 } from '@unique-nft/unique-mainnet-types';
-import { CollectionInfoWithSchema } from '@unique-nft/sdk/tokens';
-import '@unique-nft/sdk/tokens'; // need this to get sdk.collections
+import { CollectionInfoWithSchema, TokenPropertiesResult, UniqueTokenDecoded } from '@unique-nft/sdk/tokens';
+import '@unique-nft/sdk/tokens'; // need this to get sdk.collections and sdk.tokens declarations
 import ImplementorAPI from './implementorAPI';
 
 export class ImplementOpalAPI extends ImplementorAPI {
@@ -20,9 +20,7 @@ export class ImplementOpalAPI extends ImplementorAPI {
   }
 
   async impGetCollectionSdk(collectionId): Promise<CollectionInfoWithSchema | null> {
-    const result = await this.sdk.collections.get_new({ collectionId });
-
-    return result;
+    return this.sdk.collections.get_new({ collectionId });
   }
 
   async impGetCollectionCount() {
@@ -30,12 +28,20 @@ export class ImplementOpalAPI extends ImplementorAPI {
     return collectionStats?.created.toNumber();
   }
 
-  async impGetToken(collectionId, tokenId): Promise<UpDataStructsTokenData> {
+  async impGetToken(collectionId, tokenId): Promise<UpDataStructsTokenData | null> {
     const tokenData = await this.api.rpc.unique.tokenData(collectionId, tokenId);
     return tokenData || null;
   }
 
+  async impGetTokenSdk(collectionId, tokenId): Promise<UniqueTokenDecoded | null> {
+    return this.sdk.tokens.get_new({ collectionId, tokenId });
+  }
+
   async impGetTokenCount(collectionId) {
     return (await this.api.rpc.unique.lastTokenId(collectionId)).toNumber();
+  }
+
+  async impGetTokenPropertiesSdk(collectionId, tokenId): Promise<TokenPropertiesResult | null> {
+    return this.sdk.tokens.properties({ collectionId, tokenId });
   }
 }

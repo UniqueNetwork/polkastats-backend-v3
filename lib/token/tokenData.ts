@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable no-underscore-dangle */
-import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
 import { UpDataStructsTokenData } from '@unique-nft/unique-mainnet-types';
-import { normalizeSubstrateAddress } from '../../utils/utils';
+import { ICollectionSchemaInfo } from 'crawlers/crawlers.interfaces';
+import { TokenPropertiesResult, UniqueTokenDecoded } from '@unique-nft/sdk/tokens';
+import {
+  normalizeSubstrateAddress,
+  sanitizePropertiesValues
+} from '../../utils/utils';
 import protobuf from '../../utils/protobuf';
 import { ITokenDbEntity } from './tokenDbEntity.interface';
 import { OpalAPI } from '../providerAPI/bridgeProviderAPI/concreate/opalAPI';
@@ -51,13 +56,11 @@ function processConstData(constData, schema) {
   return getDeserializeConstData(statement);
 }
 
-function processProperties(schema: any, rawToken: UpDataStructsTokenData)
-  : { data: Object, properties: Object } {
+function processOldProperties(schema: any, rawToken: UpDataStructsTokenData)
+  : { data: Object } {
   const rawProperties = rawToken.properties;
 
-  const properties : {
-    _old_constData?: Object | string,
-  } = {};
+  let oldConstData: Object | string | null = null;
 
   rawProperties.forEach(({ key, value }) => {
     const strKey = key.toUtf8();
@@ -66,38 +69,71 @@ function processProperties(schema: any, rawToken: UpDataStructsTokenData)
 
     if (['_old_constData'].includes(strKey)) {
       try { processedValue = value.toHex(); } catch (err) { /* */ }
-    }
 
-    properties[strKey] = processedValue || strValue;
+      oldConstData = processedValue || strValue;
+    }
   });
 
   return {
-    data: processConstData(properties._old_constData, schema),
-    properties,
+    data: processConstData(oldConstData, schema),
   };
 }
 
-function formatTokenData(tokenId: number, collectionInfo: ICollectionSchemaInfo, rawToken: UpDataStructsTokenData)
-  : ITokenDbEntity {
-  const { collectionId, schema } = collectionInfo;
+function formatTokenData({
+  rawToken,
+  tokenDecoded,
+  tokenProperties,
+  collectionInfo
+}: {
+  rawToken: UpDataStructsTokenData,
+  tokenDecoded: UniqueTokenDecoded,
+  tokenProperties: TokenPropertiesResult,
+  collectionInfo: ICollectionSchemaInfo
+}) : ITokenDbEntity {
+  const { schema } = collectionInfo;
 
-  const rawOwnerJson = rawToken.owner.toJSON() as { substrate?: string, ethereum?: string };
+  const {
+    tokenId: token_id,
+    collectionId: collection_id,
+    attributes,
+    nestingParentToken,
+  } = tokenDecoded;
 
-  const owner = rawOwnerJson?.substrate || rawOwnerJson?.ethereum;
+  const {
+    owner: rawOwner,
+  }: { owner: { Ethereum?: string; Substrate?: string } } = tokenDecoded;
+
+  const owner = rawOwner?.Ethereum || rawOwner?.Substrate;
+
+  let parentId = null;
+  if (nestingParentToken) {
+    const { collectionId, tokenId } = nestingParentToken as { collectionId: number; tokenId: number };
+    parentId = `${collectionId}_${tokenId}`;
+  }
 
   return {
-    token_id: tokenId,
-    collection_id: collectionId,
+    token_id,
+    collection_id,
     owner,
     owner_normalized: normalizeSubstrateAddress(owner),
-    ...processProperties(schema, rawToken),
+    attributes: JSON.stringify(attributes),
+    properties: tokenProperties
+      ? JSON.stringify(sanitizePropertiesValues(tokenProperties))
+      : '[]',
+    parent_id: parentId,
+    ...processOldProperties(schema, rawToken),
   };
 }
 
 export async function getFormattedToken(tokenId: number, collectionInfo: ICollectionSchemaInfo, bridgeAPI: OpalAPI)
   : Promise<ITokenDbEntity | null> {
   const { collectionId } = collectionInfo;
-  const rawToken = await bridgeAPI.getToken(collectionId, tokenId);
+  const { rawToken, tokenDecoded, tokenProperties } = await bridgeAPI.getToken(collectionId, tokenId);
 
-  return rawToken ? formatTokenData(tokenId, collectionInfo, rawToken) : null;
+  return tokenDecoded ? formatTokenData({
+    rawToken,
+    tokenDecoded,
+    tokenProperties,
+    collectionInfo
+  }) : null;
 }

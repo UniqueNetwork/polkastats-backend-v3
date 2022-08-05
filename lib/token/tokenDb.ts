@@ -17,6 +17,8 @@ const TOKEN_FIELDS = [
   'data',
   'date_of_creation',
   'parent_id',
+  'properties',
+  'attributes'
 ];
 
 function prepareQueryReplacements(token: ITokenDbEntity) {

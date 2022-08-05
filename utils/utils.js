@@ -187,7 +187,15 @@ function getTokenIdFromNestingAddress(address) {
 }
 
 function sanitizeUnicodeString(str) {
-  return str.replace(/\\u0000/g, '');
+  // eslint-disable-next-line no-control-regex
+  return str.replace(/\\u0000|\x00/g, '');
+}
+
+function sanitizePropertiesValues(propertiesArr) {
+  return propertiesArr.map(({ key, value }) => ({
+    key,
+    value: sanitizeUnicodeString(value),
+  }));
 }
 
 module.exports = {
@@ -210,5 +218,6 @@ module.exports = {
   isNestingAddress,
   getCollectionIdFromNestingAddress,
   getTokenIdFromNestingAddress,
-  sanitizeUnicodeString
+  sanitizeUnicodeString,
+  sanitizePropertiesValues
 };

@@ -1,5 +1,9 @@
-import { CollectionInfoWithSchema } from '@unique-nft/sdk/tokens';
-import { UpDataStructsCollectionLimits, UpDataStructsRpcCollection } from '@unique-nft/unique-mainnet-types';
+import { CollectionInfoWithSchema, TokenPropertiesResult, UniqueTokenDecoded } from '@unique-nft/sdk/tokens';
+import {
+  UpDataStructsCollectionLimits,
+  UpDataStructsRpcCollection,
+  UpDataStructsTokenData,
+} from '@unique-nft/unique-mainnet-types';
 import { ImplementOpalAPI } from '../implement/implementOpalAPI';
 import AbstractAPI from './abstractAPI';
 
@@ -26,9 +30,22 @@ export class OpalAPI extends AbstractAPI {
     };
   }
 
-  async getToken(collectionId, tokenId) {
-    const token = await this.impl.impGetToken(collectionId, tokenId);
-    return token || null;
+  async getToken(collectionId, tokenId): Promise<{
+    rawToken: UpDataStructsTokenData | null,
+    tokenDecoded: UniqueTokenDecoded | null,
+    tokenProperties: TokenPropertiesResult | null
+  }> {
+    const [rawToken, tokenDecoded, tokenProperties] = await Promise.all([
+      this.impl.impGetToken(collectionId, tokenId),
+      this.impl.impGetTokenSdk(collectionId, tokenId),
+      this.impl.impGetTokenPropertiesSdk(collectionId, tokenId)
+    ]);
+
+    return {
+      rawToken,
+      tokenDecoded,
+      tokenProperties
+    };
   }
 
   getCollectionCount() {
